@@ -13,7 +13,7 @@ window.ced = window.ced || {};
 			if ( _.isUndefined( this.id ) ) {
 				return $.Deferred().rejectWith( this ).promise();
 			}
-			console.log(model.nonces);
+			console.log(method);
 			//Overload sync
 			if( 'read' == method ) {
 				options = options || {};
