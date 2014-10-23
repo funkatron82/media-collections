@@ -50,8 +50,12 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 			return;
 
 		?>
-			<div id="cedmc-main">
-			</div>
+        <div id="cedmc-main">
+            <div id="cedmc-toolbar">
+            </div>
+            <div id="cedmc-preview">
+            </div>	
+        </div>
          <?php
 	}
 
@@ -98,21 +102,17 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 	
 	function print_templates() {
 		?>
-        <script type="text/html" id="tmpl-cedmc-gallery-main"> 
-        	<div id="cedmc-toolbar">
-				<a href="#" class="update button">
-				<# if( data.ids.length > 0 ) { #>
-					<span class="dashicons dashicons-edit cedmc-icon"></span> <?php _e( 'Edit Gallery', 'cedmc' ); ?>
-				<# } else { #>
-					<span class="dashicons dashicons-plus cedmc-icon"></span> <?php _e( 'Add to Gallery', 'cedmc' ); ?>
-				<# } #>
-				</a>
-				<div class="status">
-					{{{ data.ids.length }}} <?php _e( ' items ', 'cedmc' ); ?>
-				</div>
+        <script type="text/html" id="tmpl-cedmc-gallery-toolbar"> 
+		<a href="#" class="update button">
+			<# if( data.ids.length > 0 ) { #>
+				<span class="dashicons dashicons-edit cedmc-icon"></span> <?php _e( 'Edit Gallery', 'cedmc' ); ?>
+			<# } else { #>
+				<span class="dashicons dashicons-plus cedmc-icon"></span> <?php _e( 'Add to Gallery', 'cedmc' ); ?>
+			<# } #>
+			</a>
+			<div class="status">
+				{{{ data.ids.length }}} <?php _e( ' items ', 'cedmc' ); ?>
 			</div>
-			<div id="cedmc-preview">
-			</div>	
 		</script>
 		<?php 
 	}

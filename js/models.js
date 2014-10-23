@@ -13,7 +13,7 @@ window.ced = window.ced || {};
 			if ( _.isUndefined( this.id ) ) {
 				return $.Deferred().rejectWith( this ).promise();
 			}
-			console.log(method);
+
 			//Overload sync
 			if( 'read' == method ) {
 				options = options || {};
@@ -49,7 +49,6 @@ window.ced = window.ced || {};
 						options.data.changes[ key ] = this.get( key );
 					}, this );
 				}
-				console.log(options.data);
 				return media.ajax( options );
 				
 			} else {
@@ -58,58 +57,6 @@ window.ced = window.ced || {};
 				 */
 				return Backbone.Model.prototype.sync.apply( this, arguments );
 			}
-		},
-		
-		media: function() {
-			var attrs = this.toJSON(), args, query, others, self = this;
-
-			// Fill the default shortcode attributes.
-			attrs = _.defaults( attrs, this.defaults );
-			args  = _.pick( attrs, 'orderby', 'order' );
-
-			args.type    = this.type;
-			args.perPage = -1;
-
-			// Mark the `orderby` override attribute.
-			if ( undefined !== attrs.orderby ) {
-				attrs._orderByField = attrs.orderby;
-			}
-
-			if ( 'rand' === attrs.orderby ) {
-				attrs._orderbyRandom = true;
-			}
-
-			// Map the `orderby` attribute to the corresponding model property.
-			if ( ! attrs.orderby || /^menu_order(?: ID)?$/i.test( attrs.orderby ) ) {
-				args.orderby = 'menuOrder';
-			}
-
-			// Map the `ids` param to the correct query args.
-			if ( attrs.ids && attrs.ids.length > 0 ) {
-				args.post__in = attrs.ids;
-				args.orderby  = 'post__in';
-			} else if ( attrs.include && attrs.include.length > 0 ) {
-				args.post__in = attrs.include;
-			}
-
-			if ( attrs.exclude && attrs.excluide.length > 0 ) {
-				args.post__not_in = attrs.exclude;
-			}
-
-			if ( ! args.post__in ) {
-				args.uploadedTo = attrs.id;
-			}
-
-			// Collect the attributes that were not included in `args`.
-			others = _.omit( attrs, 'id', 'ids', 'include', 'exclude', 'orderby', 'order', 'nonces' );
-
-			_.each( others, function( value, key ) {
-				others[ key ] = wp.media.coerce( others, key );
-			});
-
-			query = wp.media.query( args );
-			query[ this.tag ] = new Backbone.Model( others );
-			return query;	
 		}
 	} );
 	
