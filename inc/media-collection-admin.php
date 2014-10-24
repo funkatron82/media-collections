@@ -208,9 +208,3 @@ class CED_Media_Collection_Type_Admin extends CED_Post_Type_Admin {
 	
 }
 endif;
-
-add_action( 'wp_ajax_ced_test', 'ced_test_ajax' );
-function ced_test_ajax() {
-	echo $_SERVER['REQUEST_METHOD'];
-	die(;
-}

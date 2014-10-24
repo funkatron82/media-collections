@@ -28,8 +28,9 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		wp_enqueue_script( 'cedmc' );
 		
 		wp_register_style( 'cedmc', CEDMC_URL . 'css/media-collections.css', array() );
+		wp_register_style( 'cedmc-gallery', CEDMC_URL . 'css/gallery.css', array( 'cedmc' ) );
 		
-		wp_enqueue_style( 'cedmc' );
+		wp_enqueue_style( 'cedmc-gallery' );
 	}
 	
 	function get_data( $gallery = 0 ) {
@@ -57,6 +58,10 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
             </div>	
         </div>
          <?php
+		/*$styles = wp_media_mce_styles(); 
+		foreach ( $styles as $style ) { 
+			printf( '<link rel="stylesheet" href="%s"/>', $style ); 
+		} */
 	}
 
 	
