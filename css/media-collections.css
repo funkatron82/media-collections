@@ -13,7 +13,7 @@
 	padding-left: 5px;	
 }
 
-#cedmc-toolbar .update {
+#cedmc-toolbar .primary-bar {
 	float:left;	
 }
 
@@ -29,4 +29,15 @@
 #cedmc-main #cedmc-toolbar,
 #cedmc-main #cedmc-preview {
 	margin-top:20px;	
+}
+
+#cedmc-toolbar {
+	padding: 2px;
+	line-height:30px;
+	vertical-align:middle;
+}
+
+#cedmc-toolbar .update,
+#cedmc-toolbar select {
+	vertical-align:middle;	
 }

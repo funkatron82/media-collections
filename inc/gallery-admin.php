@@ -103,6 +103,7 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 	function print_templates() {
 		?>
         <script type="text/html" id="tmpl-cedmc-gallery-toolbar"> 
+		<div class="primary-bar">
 		<a href="#" class="update button">
 			<# if( data.ids.length > 0 ) { #>
 				<span class="dashicons dashicons-edit cedmc-icon"></span> <?php _e( 'Edit Gallery', 'cedmc' ); ?>
@@ -110,9 +111,11 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 				<span class="dashicons dashicons-plus cedmc-icon"></span> <?php _e( 'Add to Gallery', 'cedmc' ); ?>
 			<# } #>
 			</a>
-			<div class="status">
-				{{{ data.ids.length }}} <?php _e( ' items ', 'cedmc' ); ?>
-			</div>
+		</div>
+		<div class="status">
+			{{{ data.ids.length }}} <?php _e( ' items ', 'cedmc' ); ?>
+		</div>
+		
 		</script>
 		<?php 
 	}

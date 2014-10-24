@@ -111,19 +111,23 @@ window.ced = window.ced || {};
 		tag: 'playlist',
 		
 		initialize: function( options ) {
-			var self = this;
+			Toolbar.prototype.initialize.apply(this);
 			this.type = this.model.type || 'audio';
 			this.model.on( 'change:type', function() {
-				self.type = this.type;
-			} );	
+				this.type = this.model.type;
+			}, this );	
+			
 		},
 		
 		events: function() {
-			return {
-				'change .type': function( event ) {
-					this.model.save( { type: event.target.val() } );
+			return _.extend( {}, Toolbar.prototype.events.apply(this),
+				 {
+					'change .type': function( event ) {
+						console.log( this.$el.find( '.type' ).val() );
+						this.model.save( { type: this.$el.find( '.type' ).val() } );
+					}
 				}
-			}
+			);
 		}
 	} );
 	
@@ -138,8 +142,10 @@ window.ced = window.ced || {};
 				options,
 				self = this;
 				
-			if( attrs.ids.length == 0 )
+			if( attrs.ids.length == 0 ) {
+				return self.$el.html( '' );
 				return;
+			}
 				
 			attrs.ids = attrs.ids.toString();
 			
@@ -191,17 +197,32 @@ window.ced = window.ced || {};
 			_.each( model.defaults, function( value, key ) {
 					data[ key ] = model.coerce( data, key );
 			});
+			
+			if( 0 === data.ids.length ) {
+				self.$el.html( '' );
+				return;
+			}
+			
+			data.ids = data.ids.toString();
 
-			options = _.pick( data, 'type', 'style', 'tracklist', 'tracknumbers', 'images', 'artists' ); 
-					
+			options = {
+				type: data.type,
+				style: data.style,
+				tracklist: data.tracklist,
+				tracknumbers: data.tracknumbers,
+				images: data.images,
+				artists: data.artists
+			};
+			
+			
 			this.attachments = wp.media.playlist.attachments( new wp.shortcode({
 				tag:    'playlist',
-				attrs:  attrs,
+				attrs:  data,
 				type:   'single'
 			} ) );
 			
 			this.attachments.more().done( function() {
-				if ( ! this.attachments.length ) {
+				if ( ! self.attachments.length ) {
 					self.$el.html( self.template( options ) );
 				}
 	
@@ -220,8 +241,8 @@ window.ced = window.ced || {};
 						if ( 'video' === data.type ) {
 							size.width = attachment.width;
 							size.height = attachment.height;
-							if ( media.view.settings.contentWidth ) {
-								resize.width = media.view.settings.contentWidth - 22;
+							if ( wp.media.view.settings.contentWidth ) {
+								resize.width = wp.media.view.settings.contentWidth - 22;
 								resize.height = Math.ceil( ( size.height * resize.width ) / size.width );
 								if ( ! options.width ) {
 									options.width = resize.width;
@@ -249,6 +270,7 @@ window.ced = window.ced || {};
 	
 				options.tracks = tracks;
 				self.$el.html( self.template( options ) );
+				new WPPlaylistView({ metadata: options, el:  self.$el.find( '.wp-playlist' ).get(0)});
 			} );
 		}
 	} );

@@ -11,7 +11,8 @@ function get_gallery_media( $gallery ) {
 	  'post_status' => 'inherit',
 	  'connected_orderby' => 'media_order',
 	  'connected_order' => 'asc',
-	  'connected_order_num' => true
+	  'connected_order_num' => true,
+	  'post_mime_type' => 'image'
 	) );	
 }
 
@@ -36,6 +37,7 @@ function get_gallery_meta( $gallery ) {
 //Playlists
 function get_playlist_media( $playlist ) {
 	$playlist = get_post( $playlist );
+	$type = get_playlist_type( $playlist->ID );
 	
 	return new WP_Query( array(
 	  'connected_type' => 'playlist_to_media',
@@ -44,7 +46,8 @@ function get_playlist_media( $playlist ) {
 	  'post_status' => 'inherit',
 	  'connected_orderby' => 'media_order',
 	  'connected_order' => 'asc',
-	  'connected_order_num' => true
+	  'connected_order_num' => true,
+	  'post_mime_type' => $type
 	) );	
 }
 
@@ -56,7 +59,7 @@ function get_playlist_media_ids( $playlist ) {
 function get_playlist_meta( $playlist ) {
 	$playlist = get_post( $playlist );
 	$keys = apply_filters( 'cedmc_playlist_keys', array( 'tracklist', 'images', 'artists', 'tracknumbers', 'style' ) ); 
-	$meta = array();
+	$meta = array( 'type' => get_playlist_type( $playlist->ID ));
 	foreach( $keys as $key ) {
 		$value = get_post_meta( $playlist->ID, $key, true );
 		if( $value ) {
@@ -67,8 +70,7 @@ function get_playlist_meta( $playlist ) {
 }
 
 function get_playlist_type( $playlist ) {	
-	 if ( ! $collection = get_post( $playlist ) )
-		return false;
+	$playlist =  get_post( $playlist );
 	
 	$types = get_the_terms( $playlist->ID, 'playlist_type' );
 
