@@ -14,8 +14,9 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 	}
 
 	function enqueue_scripts( $hook ) {
-		if( $this->bail() || 'post.php' !== $hook )
+		if( $this->bail() || ( 'post.php' !== $hook && 'post-new.php' !== $hook ) ) {
 			return;
+		}
 			
 		global $post;
 		$id = $post->ID;
