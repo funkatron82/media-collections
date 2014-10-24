@@ -14,22 +14,17 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 	}
 
 	function enqueue_scripts( $hook ) {
-		if( $this->bail() )
+		if( $this->bail() || 'post.php' !== $hook )
 			return;
 			
 		global $post;
 		$id = $post->ID;
-		wp_enqueue_media();
-		wp_register_script( 'cedmc-models', CEDMC_URL . 'js/models.js', array( 'backbone', 'media-editor', 'media-models', 'media-audiovideo' ) );
-		wp_register_script( 'cedmc-views', CEDMC_URL . 'js/views.js', array( 'backbone', 'media-editor', 'cedmc-models', 'wp-playlist', 'wp-mediaelement' ) );
-		wp_register_script( 'cedmc', CEDMC_URL . 'js/media-collections.js', array( 'backbone', 'cedmc-models', 'cedmc-views' ) );
-		wp_localize_script( 'cedmc', 'cedmc_data', $this->get_data( $id ) );
 		
-		wp_enqueue_script( 'cedmc' );
-		
-		wp_register_style( 'cedmc', CEDMC_URL . 'css/media-collections.css', array() );
-		wp_register_style( 'cedmc-gallery', CEDMC_URL . 'css/gallery.css', array( 'cedmc' ) );
-		
+		wp_register_script( 'cedmc-gallery', CEDMC_URL . 'js/gallery.js', array( 'backbone', 'cedmc-models', 'cedmc-views' ) );
+		wp_localize_script( 'cedmc-gallery', 'galleryData', $this->get_data( $id ) );		
+		wp_enqueue_script( 'cedmc-gallery' );
+
+		wp_register_style( 'cedmc-gallery', CEDMC_URL . 'css/gallery.css', array( 'cedmc' ) );		
 		wp_enqueue_style( 'cedmc-gallery' );
 	}
 	

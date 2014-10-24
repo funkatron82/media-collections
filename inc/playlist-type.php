@@ -144,3 +144,15 @@ class CED_Playlist_Type extends CED_Post_Type {
 	}
 }
 endif;
+
+function playlist_content( $content ) {
+	$playlist = get_post();
+	if( 'playlist' !== $playlist->post_type )	
+		return $content;
+	
+	$meta = get_playlist_meta( $playlist->ID );
+	$meta['ids'] = get_playlist_media_ids( $playlist->ID );
+	return wp_playlist_shortcode( $meta ) . $content;
+}
+
+add_filter( 'the_content', 'playlist_content' );

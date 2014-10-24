@@ -103,3 +103,15 @@ class CED_Gallery_Type extends CED_Post_Type {
 	}
 }
 endif;
+
+function gallery_content( $content ) {
+	$gallery = get_post();
+	if( 'gallery' !== $gallery->post_type )	
+		return $content;
+	
+	$meta = get_gallery_meta( $gallery->ID );
+	$meta['ids'] = get_gallery_media_ids( $gallery->ID );
+	return gallery_shortcode( $meta ) . $content;
+}
+
+add_filter( 'the_content', 'gallery_content' );

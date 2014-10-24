@@ -15,10 +15,8 @@ require_once( CEDMC_INC_DIR . 'p2p.php' );
 require_once( CEDMC_INC_DIR . 'post-type.php' );
 require_once( CEDMC_INC_DIR . 'post-type-admin.php' );
 require_once( CEDMC_INC_DIR . 'functions.php' );
-require_once( CEDMC_INC_DIR . 'media-collection-type.php' );
 require_once( CEDMC_INC_DIR . 'playlist-type.php' );
 require_once( CEDMC_INC_DIR . 'gallery-type.php' );
-require_once( CEDMC_INC_DIR . 'functions.php' );
 require_once( CEDMC_INC_DIR . 'gallery-admin.php' );
 require_once( CEDMC_INC_DIR . 'playlist-admin.php' );
 
@@ -62,5 +60,9 @@ register_deactivation_hook( __FILE__, 'cedmc_deactivate' );
 add_action( 'admin_enqueue_scripts', 'cedmc_enqueue_scripts' );
 
 function cedmc_enqueue_scripts( $hook ) {
+	wp_enqueue_media();
+	wp_register_script( 'cedmc-models', CEDMC_URL . 'js/models.js', array( 'backbone', 'media-editor', 'media-models', 'media-audiovideo' ) );
+	wp_register_script( 'cedmc-views', CEDMC_URL . 'js/views.js', array( 'backbone', 'media-editor', 'cedmc-models', 'wp-playlist', 'wp-mediaelement' ) );
 	
+	wp_register_style( 'cedmc', CEDMC_URL . 'css/media-collections.css', array() );
 }
