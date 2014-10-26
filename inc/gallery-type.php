@@ -75,7 +75,10 @@ class CED_Gallery_Type extends CED_Post_Type {
 				$media = new WP_Query( array(
 				  'connected_type' => 'gallery_to_media',
 				  'connected_items' => $query->posts,
-				  'nopaging' => true
+				  'nopaging' => true,
+				  'connected_orderby' => 'media_order',
+				  'connected_order' => 'asc',
+				  'connected_order_num' => true
 				) );
 				
 				$groups = scb_list_group_by( $media->posts, '_p2p_get_other_id' );

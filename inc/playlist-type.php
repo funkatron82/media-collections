@@ -88,7 +88,7 @@ class CED_Playlist_Type extends CED_Post_Type {
 			'show_admin_column'          => false,
 			'show_in_nav_menus'          => true,
 			'show_tagcloud'              => true,
-			'query_var'                  => 'playlist-type',
+			'query_var'                  => 'playlist_type',
 			'rewrite'                    => $rewrite,
 		);
 		register_taxonomy( 'playlist_type', array( $this->post_type ), $args );	
