@@ -106,8 +106,7 @@ class CED_Playlist_Type extends CED_Post_Type {
 			$playlists = array(
 				'audio' =>array(),
 				'video' => array()
-			);	
-			
+			);				
 
 			foreach( $items as $item ) {
 				if( 'playlist' === $item->post_type ) {
