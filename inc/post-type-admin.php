@@ -4,10 +4,6 @@ if( !class_exists( 'CED_Post_Type_Admin' ) ) {
 	public $post_type;
 
 	function __construct() {
-		/*if( !is_admin() )
-			return;
-			*/
-		
 		add_filter( "manage_{$this->post_type}_posts_columns", array( $this,'add_columns' ) );
 		add_filter( "manage_edit-{$this->post_type}_sortable_columns", array( $this,'add_sortable_columns' ) );
 		add_action( "manage_{$this->post_type}_posts_custom_column", array( $this,'manage_columns'), 10, 2 );
@@ -69,7 +65,7 @@ if( !class_exists( 'CED_Post_Type_Admin' ) ) {
 				$term_groups[ $term->parent ][] = $term;
 				
 			}
-			
+			$name = $name ? $name : $tax_obj->name;
 			$selected = get_query_var( $name );
 			if( ! $tax_name = $tax_obj->labels->name ) {
 				return;;
@@ -85,7 +81,7 @@ if( !class_exists( 'CED_Post_Type_Admin' ) ) {
 	}
 	
 	function print_taxonomy_options( $groups, $parent = 0,  $selected = NULL, $level = 0 ) {
-		if( !isset( $groups[ $parent ] ) ) {
+		if( ! isset( $groups[ $parent ] ) ) {
 			return;
 		}
 		$terms = $groups[ $parent ];		
@@ -97,7 +93,7 @@ if( !class_exists( 'CED_Post_Type_Admin' ) ) {
 				sprintf( '%s%s (%s)', str_repeat( '&nbsp;&nbsp;&nbsp;', $level ), $term->name, $term->count )
 			);
 			
-			$this->print_taxonomy_options( $terms, $term->term_id, $selected, ++ $level );
+			$this->print_taxonomy_options( $groups, $term->term_id, $selected, $level + 1 );
 		}
 		
 	}

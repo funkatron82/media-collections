@@ -27,6 +27,39 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 		wp_enqueue_style( 'cedmc' );
 	}
 	
+	function add_columns( $columns ) {		
+		return array_slice( $columns, 0, 2, true ) + array( 'type' => 'Type', 'items' => 'Items' ) + array_slice( $columns, 2, NULL, true );	
+	}
+	
+	function manage_columns( $column, $id ) {
+		global $post;
+		if( 'items' === $column ) {
+			$items = count( $post->media );
+			if( ( $items > 0 ) ) {
+				echo $items . _n( ' item', ' items', $images );
+			} else {
+				echo "—";	
+			}
+		} elseif( 'type' === $column ) {
+			$types = get_the_terms( $id, 'playlist_type' );
+			if( !$types || is_wp_error( $types ) ) {
+				echo "—";
+			} else {
+				$type = array_shift( $types );	
+				echo $type->name;
+			}
+		}
+		
+	}
+	
+	function restrict_posts() {			
+		if(	$this->bail() ) {
+			return;
+		}
+			
+		$this->generate_taxonomy_select( 'playlist_type', 'playlist-type' );
+	}
+	
 	function get_data( $playlist = 0 ) {
 		$playlist = get_post( $playlist );
 		$meta = array(

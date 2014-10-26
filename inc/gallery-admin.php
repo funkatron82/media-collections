@@ -12,7 +12,24 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		add_action( 'edit_form_after_title', array( $this, 'show_gallery')  );
 		add_action( 'print_media_templates', array( $this, 'print_templates' ) );
 	}
-
+	
+	function add_columns( $columns ) {		
+		return array_slice( $columns, 0, 2, true ) + array( 'items' => 'Images' ) + array_slice( $columns, 2, NULL, true );	
+	}
+	
+	function manage_columns( $column, $id ) {
+		global $post;
+		if( 'items' === $column ) {
+			$items = count( $post->media );
+			if( ( $items > 0 ) ) {
+				echo $items . _n( ' image', ' images', $items );
+			} else {
+				echo "—";	
+			}
+		}
+		
+	}
+	
 	function enqueue_scripts( $hook ) {
 		if( $this->bail() || ( 'post.php' !== $hook && 'post-new.php' !== $hook ) ) {
 			return;
@@ -54,10 +71,6 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
             </div>	
         </div>
          <?php
-		/*$styles = wp_media_mce_styles(); 
-		foreach ( $styles as $style ) { 
-			printf( '<link rel="stylesheet" href="%s"/>', $style ); 
-		} */
 	}
 
 	

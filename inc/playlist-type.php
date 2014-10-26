@@ -103,25 +103,36 @@ class CED_Playlist_Type extends CED_Post_Type {
 		remove_filter( 'the_posts', array( $this, 'process_posts' ) );
 		if( function_exists( 'p2p_distribute_connected' ) && p2p_type( 'playlist_to_media' )  ) { 
 			$items =& $posts;
-			$collections = array();
+			$playlists = array(
+				'audio' =>array(),
+				'video' => array()
+			);	
 			
+
 			foreach( $items as $item ) {
 				if( 'playlist' === $item->post_type ) {
 					$item->media = array();
-					$collections[ $item->ID ] = $item;	
+					$type = get_playlist_type( $item->ID );
+					$playlists[$type][ $item->ID ] = $item; 
 				}
 			}
 			
-			if( !empty( $collections ) ) {
-				$media = new WP_Query( array(
-				  'connected_type' => 'gallery_to_media',
-				  'connected_items' => $query->posts,
-				  'nopaging' => true
-				) );
-				
-				$groups = scb_list_group_by( $media->posts, '_p2p_get_other_id' );
-				foreach ( $groups as $outer_item_id => $connected_items ) {
-					$collections[ $outer_item_id ]->media = $connected_items;
+			foreach( array( 'audio', 'video' ) as $type ) {
+				if( ! empty( $playlists[$type] ) ) {
+					$media = new WP_Query( array(
+					  'connected_type' => 'playlist_to_media',
+					  'connected_items' => $playlists[$type],
+					  'nopaging' => true,
+					  'connected_orderby' => 'media_order',
+					  'connected_order' => 'asc',
+					  'connected_order_num' => true,
+					  'post_mime_type' => $type
+					) );
+					
+					$groups = scb_list_group_by( $media->posts, '_p2p_get_other_id' );
+					foreach ( $groups as $outer_item_id => $connected_items ) {
+						$playlists[$type][ $outer_item_id ]->media = $connected_items;
+					}
 				}
 			}
 		}
