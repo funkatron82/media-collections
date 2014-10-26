@@ -95,8 +95,8 @@ class CED_Playlist_Type extends CED_Post_Type {
 	}
 	
 	function populate_taxonomy() {
-		wp_insert_term( 'Audio', 'playlist_type', array( 'slug' => 'audio') );	
-		wp_insert_term( 'Video', 'playlist_type', array( 'slug' => 'video') );		
+		wp_insert_term( 'Audio Playlists', 'playlist_type', array( 'slug' => 'audio') );	
+		wp_insert_term( 'Video Playlists', 'playlist_type', array( 'slug' => 'video') );		
 	}
 	
 	function process_posts( $posts, $query ) {
