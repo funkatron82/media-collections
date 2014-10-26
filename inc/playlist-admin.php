@@ -28,15 +28,15 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 	}
 	
 	function add_columns( $columns ) {		
-		return array_slice( $columns, 0, 2, true ) + array( 'type' => 'Type', 'items' => 'Items' ) + array_slice( $columns, 2, NULL, true );	
+		return array_slice( $columns, 0, 2, true ) + array( 'type' => 'Type', 'media' => 'Media' ) + array_slice( $columns, 2, NULL, true );	
 	}
 	
 	function manage_columns( $column, $id ) {
 		global $post;
-		if( 'items' === $column ) {
-			$items = count( $post->media );
-			if( ( $items > 0 ) ) {
-				echo $items . _n( ' item', ' items', $images );
+		if( 'media' === $column ) {
+			$media = count( $post->media );
+			if( ( $media > 0 ) ) {
+				echo $media . _n( ' item', ' items', $images );
 			} else {
 				echo "—";	
 			}
