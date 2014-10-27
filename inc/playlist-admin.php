@@ -76,7 +76,6 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 	function show_playlist( $post ) {
 		if( 'playlist' !== $post->post_type )	
 			return;
-
 		?>
         <div id="cedmc-main">
             <div id="cedmc-toolbar">
@@ -84,7 +83,9 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
             <div id="cedmc-preview">
             </div>	
         </div>
-         <?php
+        <label for="content"><strong>Description</strong></label>
+		<?php
+		wp_editor( $post->post_content, 'content', array( 'tinymce' => false, 'media_buttons' => false ) );
 	}
 
 	

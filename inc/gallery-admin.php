@@ -70,7 +70,9 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
             <div id="cedmc-preview">
             </div>	
         </div>
-         <?php
+        <label for="content"><strong>Description</strong></label>
+		<?php
+		wp_editor( $post->post_content, 'content', array( 'tinymce' => false, 'media_buttons' => false ) );
 	}
 
 	
