@@ -36,7 +36,7 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 		if( 'media' === $column ) {
 			$media = count( $post->media );
 			if( ( $media > 0 ) ) {
-				echo $media . _n( ' item', ' items', $images );
+				echo $media . _n( ' item', ' items', $media );
 			} else {
 				echo "—";	
 			}
