@@ -1,5 +1,5 @@
 # Media Collections
-=================
+
 ## Description
 A Wordpress plugin for stand alone image galleries and audio/video playlists
 
