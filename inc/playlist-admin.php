@@ -126,7 +126,7 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 			$old = get_gallery_meta( $playlist );
 			$new = wp_parse_args( $changes, $old );
 			unset( $new['type'] );
-			update_post_meta( $playlist, '_playlist_meta', $new );
+			update_post_meta( $playlist, '_playlist_metadata', $new );
 		}
 
 		wp_send_json_success( $this->get_data( $playlist ) );

@@ -23,7 +23,7 @@ function get_gallery_media_ids( $gallery ) {
 
 function get_gallery_meta( $gallery ) {
 	$gallery = get_post( $gallery );
-	$meta = get_post_meta( $gallery->ID, '_gallery_meta', true );
+	$meta = get_post_meta( $gallery->ID, '_gallery_metadata', true );
 	return $meta ? (array) $meta : array();
 }
 
@@ -51,7 +51,7 @@ function get_playlist_media_ids( $playlist ) {
 
 function get_playlist_meta( $playlist ) {
 	$playlist = get_post( $playlist );
-	$meta = get_post_meta( $playlist->ID, '_playlist_meta', true );
+	$meta = get_post_meta( $playlist->ID, '_playlist_metadata', true );
 	$meta = $meta ? (array) $meta : array();
 	$meta['type'] = get_playlist_type( $playlist->ID );
 	return $meta;

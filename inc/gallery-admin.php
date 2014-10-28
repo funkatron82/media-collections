@@ -107,7 +107,7 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		if( $changes ) {
 			$old = get_gallery_meta( $gallery );
 			$new = wp_parse_args( $changes, $old );
-			update_post_meta( $gallery, '_gallery_meta', $new );
+			update_post_meta( $gallery, '_gallery_metadata', $new );
 		}
 		
 		wp_send_json_success( $this->get_data( $gallery ) );
