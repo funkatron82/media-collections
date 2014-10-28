@@ -83,7 +83,7 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
             <div id="cedmc-preview">
             </div>	
         </div>
-        <label for="content"><strong>Description</strong></label>
+        <label for="content"><strong>Description</strong>:</label>
 		<?php
 		wp_editor( $post->post_content, 'content', array( 'tinymce' => false, 'media_buttons' => false ) );
 	}

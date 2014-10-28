@@ -53,6 +53,7 @@ class CED_Playlist_Type extends CED_Post_Type {
 			'query_var'           => 'playlist',
 			'rewrite'             => $rewrite,
 			'capability_type'     => 'post',
+			'menu_icon'           => 'dashicons-video-alt3'
 		);
 		register_post_type( $this->post_type, $args );	
 	}
