@@ -23,15 +23,8 @@ function get_gallery_media_ids( $gallery ) {
 
 function get_gallery_meta( $gallery ) {
 	$gallery = get_post( $gallery );
-	$keys = apply_filters( 'cedmc_gallery_keys', array( 'link', 'columns', 'orderby', 'order' ) ); 
-	$meta = array();
-	foreach( $keys as $key ) {
-		$value = get_post_meta( $gallery->ID, $key, true );
-		if( $value ) {
-			$meta[$key] = $value;
-		}
-	}
-	return $meta;
+	$meta = get_post_meta( $gallery->ID, '_gallery_meta', true );
+	return $meta ? (array) $meta : array();
 }
 
 //Playlists
@@ -58,14 +51,9 @@ function get_playlist_media_ids( $playlist ) {
 
 function get_playlist_meta( $playlist ) {
 	$playlist = get_post( $playlist );
-	$keys = apply_filters( 'cedmc_playlist_keys', array( 'tracklist', 'images', 'artists', 'tracknumbers', 'style' ) ); 
-	$meta = array( 'type' => get_playlist_type( $playlist->ID ));
-	foreach( $keys as $key ) {
-		$value = get_post_meta( $playlist->ID, $key, true );
-		if( $value ) {
-			$meta[$key] = $value;
-		}
-	}
+	$meta = get_post_meta( $playlist->ID, '_playlist_meta', true );
+	$meta = $meta ? (array) $meta : array();
+	$meta['type'] = get_playlist_type( $playlist->ID );
 	return $meta;
 }
 

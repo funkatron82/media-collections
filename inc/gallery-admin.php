@@ -98,13 +98,16 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		$changes =  isset( $_REQUEST['changes'] ) ? (array) $_REQUEST['changes'] : array();
 		check_ajax_referer( 'cedmc-update_' . $gallery );
 		
-		foreach( $changes as $key => $value ) {
-			if( 'ids' === $key ) {
-				$this->remove_media_ids( $gallery );	
-				$this->set_media_ids( $gallery, $value );
-			} else {
-				update_post_meta( $gallery, $key, $value );	
-			}
+		if( $changes['ids'] ) {
+			$this->remove_media_ids( $gallery );	
+			$this->set_media_ids( $gallery, $changes['ids'] );
+			unset( $changes['ids'] );
+		}
+		
+		if( $changes ) {
+			$old = get_gallery_meta( $gallery );
+			$new = wp_parse_args( $changes, $old );
+			update_post_meta( $gallery, '_gallery_meta', $new );
 		}
 		
 		wp_send_json_success( $this->get_data( $gallery ) );

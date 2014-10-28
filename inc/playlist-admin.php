@@ -111,17 +111,24 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 		$changes =  isset( $_REQUEST['changes'] ) ? (array) $_REQUEST['changes'] : array();
 		check_ajax_referer( 'cedmc-update_' . $playlist );
 		
-		foreach( $changes as $key => $value ) {
-			if( 'ids' === $key ) {
-				$this->remove_media_ids( $playlist );	
-				$this->set_media_ids( $playlist, $value );
-			} elseif( 'type' === $key ) {
-				wp_set_object_terms( $playlist, $value, 'playlist_type' );	
-			} else {
-				update_post_meta( $playlist, $key, $value );	
-			}
+		if( $changes['ids'] ) {
+			$this->remove_media_ids( $playlist );	
+			$this->set_media_ids( $playlist, $changes['ids'] );
+			unset( $changes['ids'] );
 		}
 		
+		if( $changes['type'] ) {
+			wp_set_object_terms( $playlist, $value, 'playlist_type' );
+			unset( $changes['type'] );
+		}
+		
+		if( $changes ) {
+			$old = get_gallery_meta( $playlist );
+			$new = wp_parse_args( $changes, $old );
+			unset( $new['type'] );
+			update_post_meta( $playlist, '_playlist_meta', $new );
+		}
+
 		wp_send_json_success( $this->get_data( $playlist ) );
 	}
 	
