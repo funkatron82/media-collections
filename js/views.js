@@ -158,11 +158,12 @@ window.ced = window.ced || {};
 			this.attachments.more().done( function() {				
 				if ( self.attachments.length ) {
 					attachments = self.attachments.toJSON();
+					console.log(attachments);
 			
 					_.each( attachments, function( attachment ) {
 						if ( attachment.sizes ) {
-							if ( attachment.sizes.thumbnail ) {
-								attachment.thumbnail = attachment.sizes.thumbnail;
+							if ( attachment.sizes['gallery_preview'] ) {
+								attachment.thumbnail = attachment.sizes['gallery_preview'];
 							} else if ( attachment.sizes.full ) {
 								attachment.thumbnail = attachment.sizes.full;
 							}

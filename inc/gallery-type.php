@@ -114,7 +114,14 @@ function gallery_content( $content ) {
 	
 	$meta = get_gallery_meta( $gallery->ID );
 	$meta['ids'] = get_gallery_media_ids( $gallery->ID );
+	$meta['size'] = 'gallery_preview';
 	return gallery_shortcode( $meta ) . $content;
 }
 
+function gallery_sizes( $sizes ) {
+	return array_merge( $sizes, array( 'gallery_preview'=> __( 'Gallery Preview' ) ) );	
+}
+
 add_filter( 'the_content', 'gallery_content' );
+add_filter( 'image_size_names_choose', 'gallery_sizes' );
+add_image_size( 'gallery_preview', 400, 400, true );
