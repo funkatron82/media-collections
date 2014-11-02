@@ -196,8 +196,8 @@ window.ced = window.ced || {};
 				self = this;
 
 			_.each( model.defaults, function( value, key ) {
-					data[ key ] = model.coerce( data, key );
-			});
+				data[ key ] = model.coerce( data, key );
+			} );
 			
 			if( 0 === data.ids.length ) {
 				self.$el.html( '' );
@@ -230,43 +230,43 @@ window.ced = window.ced || {};
 				attachments = self.attachments.toJSON();
 	
 				_.each( attachments, function( attachment ) {
-						var size = {}, resize = {}, track = {
-							src : attachment.url,
-							type : attachment.mime,
-							title : attachment.title,
-							caption : attachment.caption,
-							description : attachment.description,
-							meta : attachment.meta
-						};
-	
-						if ( 'video' === data.type ) {
-							size.width = attachment.width;
-							size.height = attachment.height;
-							if ( wp.media.view.settings.contentWidth ) {
-								resize.width = wp.media.view.settings.contentWidth - 22;
-								resize.height = Math.ceil( ( size.height * resize.width ) / size.width );
-								if ( ! options.width ) {
-									options.width = resize.width;
-									options.height = resize.height;
-								}
-							} else {
-								if ( ! options.width ) {
-									options.width = attachment.width;
-									options.height = attachment.height;
-								}
+					var size = {}, resize = {}, track = {
+						src : attachment.url,
+						type : attachment.mime,
+						title : attachment.title,
+						caption : attachment.caption,
+						description : attachment.description,
+						meta : attachment.meta
+					};
+
+					if ( 'video' === data.type ) {
+						size.width = attachment.width;
+						size.height = attachment.height;
+						if ( wp.media.view.settings.contentWidth ) {
+							resize.width = wp.media.view.settings.contentWidth - 22;
+							resize.height = Math.ceil( ( size.height * resize.width ) / size.width );
+							if ( ! options.width ) {
+								options.width = resize.width;
+								options.height = resize.height;
 							}
-							track.dimensions = {
-								original : size,
-								resized : _.isEmpty( resize ) ? size : resize
-							};
 						} else {
-								options.width = 400;
+							if ( ! options.width ) {
+								options.width = attachment.width;
+								options.height = attachment.height;
+							}
 						}
-	
-						track.image = attachment.image;
-						track.thumb = attachment.thumb;
-	
-						tracks.push( track );
+						track.dimensions = {
+							original : size,
+							resized : _.isEmpty( resize ) ? size : resize
+						};
+					} else {
+							options.width = 400;
+					}
+
+					track.image = attachment.image;
+					track.thumb = attachment.thumb;
+
+					tracks.push( track );
 				} );
 	
 				options.tracks = tracks;
