@@ -111,9 +111,8 @@ class CED_Playlist_Type extends CED_Post_Type {
 
 			foreach( $items as $item ) {
 				if( 'playlist' === $item->post_type ) {
-					$item->media = array();
 					$type = get_playlist_type( $item->ID );
-					$playlists[$type][ $item->ID ] = $item; 
+					$playlists[$type][] = $item; 
 				}
 			}
 			
@@ -122,17 +121,10 @@ class CED_Playlist_Type extends CED_Post_Type {
 					$media = new WP_Query( array(
 					  'connected_type' => 'playlist_to_media',
 					  'connected_items' => $playlists[$type],
-					  'nopaging' => true,
-					  'connected_orderby' => 'media_order',
-					  'connected_order' => 'asc',
-					  'connected_order_num' => true,
 					  'post_mime_type' => $type
 					) );
 					
-					$groups = scb_list_group_by( $media->posts, '_p2p_get_other_id' );
-					foreach ( $groups as $outer_item_id => $connected_items ) {
-						$playlists[$type][ $outer_item_id ]->media = $connected_items;
-					}
+					p2p_distribute_connected( $playlists[$type], $media->posts, 'media' );
 				}
 			}
 		}
