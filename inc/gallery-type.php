@@ -101,7 +101,15 @@ class CED_Gallery_Type extends CED_Post_Type {
 			'to' => 'attachment',
 			'cardinality' => 'many-to-many',
 			'prevent_duplicates' => true,
-			'admin_box' => false							
+			'admin_box' => false,
+			'to_query_vars' => array( 
+				'nopaging' => true,
+				'post_status' => 'inherit',
+				'post_mime_type' => 'image',
+				'connected_orderby' => 'media_order',
+				'connected_order' => 'asc',
+				'connected_order_num' => true,
+			)							
 		) );			
 	}
 }

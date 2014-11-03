@@ -7,12 +7,6 @@ function get_gallery_media( $gallery ) {
 	return new WP_Query( array(
 	  'connected_type' => 'gallery_to_media',
 	  'connected_items' => $gallery,
-	  'nopaging' => true,
-	  'post_status' => 'inherit',
-	  'connected_orderby' => 'media_order',
-	  'connected_order' => 'asc',
-	  'connected_order_num' => true,
-	  'post_mime_type' => 'image'
 	) );	
 }
 
@@ -35,11 +29,6 @@ function get_playlist_media( $playlist ) {
 	return new WP_Query( array(
 	  'connected_type' => 'playlist_to_media',
 	  'connected_items' => $playlist,
-	  'nopaging' => true,
-	  'post_status' => 'inherit',
-	  'connected_orderby' => 'media_order',
-	  'connected_order' => 'asc',
-	  'connected_order_num' => true,
 	  'post_mime_type' => $type
 	) );	
 }
