@@ -17,9 +17,7 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 		if( $this->bail() || ( 'post.php' !== $hook && 'post-new.php' !== $hook ) ) {
 			return;
 		}
-			
-		global $post;
-		$id = $post->ID;
+
 		wp_register_script( 'cedmc-playlist', CEDMC_URL . 'js/playlist.js', array( 'backbone', 'cedmc-models', 'cedmc-views' ) );
 		wp_enqueue_script( 'cedmc-playlist' );
 		

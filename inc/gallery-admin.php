@@ -35,9 +35,6 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 			return;
 		}
 			
-		global $post;
-		$id = $post->ID;
-		
 		wp_register_script( 'cedmc-gallery', CEDMC_URL . 'js/gallery.js', array( 'backbone', 'cedmc-models', 'cedmc-views' ) );
 		wp_enqueue_script( 'cedmc-gallery' );
 
