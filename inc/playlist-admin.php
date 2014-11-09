@@ -21,7 +21,6 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 		global $post;
 		$id = $post->ID;
 		wp_register_script( 'cedmc-playlist', CEDMC_URL . 'js/playlist.js', array( 'backbone', 'cedmc-models', 'cedmc-views' ) );
-		wp_localize_script( 'cedmc-playlist', 'playlistData', $this->get_data( $id ) );		
 		wp_enqueue_script( 'cedmc-playlist' );
 		
 		wp_enqueue_style( 'cedmc' );

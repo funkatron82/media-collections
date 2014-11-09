@@ -158,8 +158,7 @@ window.ced = window.ced || {};
 			this.attachments.more().done( function() {				
 				if ( self.attachments.length ) {
 					attachments = self.attachments.toJSON();
-					console.log(attachments);
-			
+		
 					_.each( attachments, function( attachment ) {
 						if ( attachment.sizes ) {
 							if ( attachment.sizes['gallery_preview'] ) {
@@ -169,7 +168,7 @@ window.ced = window.ced || {};
 							}
 						}
 					} );
-				}
+				} 
 				
 				options = {
 					attachments: attachments,
