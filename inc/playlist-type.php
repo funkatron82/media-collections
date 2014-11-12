@@ -1,7 +1,7 @@
 <?php
 
 if( !class_exists( 'CED_Playlist_Type' )) :
-
+require_once 'term-namespace.php';
 class CED_Playlist_Type extends CED_Post_Type {
 	public $post_type = 'playlist';	
 	
@@ -9,6 +9,7 @@ class CED_Playlist_Type extends CED_Post_Type {
 		parent::__construct();
 		add_action( 'wp_loaded', array($this, 'register_connections'), 100);
 		add_filter( 'the_posts', array($this, 'process_posts'), 10, 2 );
+		$this->namespace = new CED_Term_Namespace( 'playlist_type', 'playlist-type-' );
 	}
 	
 	function setup_post_type() {
@@ -96,8 +97,8 @@ class CED_Playlist_Type extends CED_Post_Type {
 	}
 	
 	function populate_taxonomy() {
-		wp_insert_term( 'Audio Playlists', 'playlist_type', array( 'slug' => 'audio') );	
-		wp_insert_term( 'Video Playlists', 'playlist_type', array( 'slug' => 'video') );		
+		wp_insert_term( 'Audio Playlists', 'playlist_type', array( 'slug' => 'playlist-type-audio') );	
+		wp_insert_term( 'Video Playlists', 'playlist_type', array( 'slug' => 'playlist-type-video') );		
 	}
 	
 	function process_posts( $posts, $query ) {
