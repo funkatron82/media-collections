@@ -22,7 +22,8 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		if( 'media' === $column ) {
 			$media = count( $post->media );
 			if( ( $media > 0 ) ) {
-				echo $media . _n( ' image', ' images', $media );
+				printf('<a href="%s">%s %s</a>', admin_url( 'upload.php?media_in_gallery=' . $id ), $media,  _n( 'image', 'images', $media ) );
+				//echo $media . _n( ' image', ' images', $media );
 			} else {
 				echo "—";	
 			}
