@@ -115,7 +115,7 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 		}
 		
 		if( $changes['type'] ) {
-			wp_set_object_terms( $playlist, 'playlist-type-' . $changes['type'], 'playlist_type' );
+			wp_set_object_terms( $playlist, $changes['type'], 'playlist_type' );
 			unset( $changes['type'] );
 		}
 		

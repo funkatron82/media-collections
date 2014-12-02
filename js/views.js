@@ -123,7 +123,6 @@ window.ced = window.ced || {};
 			return _.extend( {}, Toolbar.prototype.events.apply(this),
 				 {
 					'change .type': function( event ) {
-						console.log( this.$el.find( '.type' ).val() );
 						this.model.save( { type: this.$el.find( '.type' ).val() } );
 					}
 				}

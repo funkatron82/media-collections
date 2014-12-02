@@ -58,6 +58,30 @@ class CED_Gallery_Type extends CED_Post_Type {
 		register_post_type( $this->post_type, $args );	
 	}
 	
+	function setup_rewrite_api() {
+		//Query vars/tags	
+		add_rewrite_tag( '%media_in_gallery%', '([^/]+)' );	
+		
+		$structs = array(
+			'gallery/%year%/%monthnum%/%day%/' ,
+			'gallery/%year%/%monthnum%/',
+			'gallery/%year%/',
+		);
+		
+		foreach ( $structs as $struct ) {
+			$this->struct_to_rewrite( $struct );	
+		}
+	}
+	
+	function parse_query( $query ) {
+		if( $gallery = $query->get( 'media_in_gallery' ) ) {
+			$gallery = is_numeric( $gallery ) ? $gallery : $this->slug_to_id( $gallery, 'gallery' );
+			$query->gallery = get_post( $gallery );
+			$query->set( 'connected_type', 'gallery_to_media' );
+			$query->set( 'connected_items', $query->gallery );
+		}
+	}
+	
 	function process_posts( $posts, $query ) {
 		remove_filter( 'the_posts', array( $this, 'process_posts' ) );
 		if( function_exists( 'p2p_distribute_connected' ) && p2p_type( 'gallery_to_media' )  ) { 

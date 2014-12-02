@@ -5,8 +5,7 @@ function get_gallery_media( $gallery ) {
 	$gallery = get_post( $gallery );
 	
 	return new WP_Query( array(
-	  'connected_type' => 'gallery_to_media',
-	  'connected_items' => $gallery,
+	  'media_in_gallery' => $gallery->ID
 	) );	
 }
 
@@ -24,12 +23,9 @@ function get_gallery_meta( $gallery ) {
 //Playlists
 function get_playlist_media( $playlist ) {
 	$playlist = get_post( $playlist );
-	$type = get_playlist_type( $playlist->ID );
-	
+
 	return new WP_Query( array(
-	  'connected_type' => 'playlist_to_media',
-	  'connected_items' => $playlist,
-	  'post_mime_type' => $type
+	  'media_in_playlist' => $playlist->ID
 	) );	
 }
 
