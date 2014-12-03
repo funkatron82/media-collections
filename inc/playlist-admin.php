@@ -33,7 +33,7 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 		if( 'media' === $column ) {
 			$media = count( $post->media );
 			if( ( $media > 0 ) ) {
-				printf('<a href="%s">%s %s</a>', admin_url( 'upload.php?media_in_playlist=' . $id ), $media,  _n( 'item', 'items', $media ) );
+				printf('<a href="%s" target="_new">%s %s</a>', admin_url( 'upload.php?media_in_playlist=' . $id ), $media,  _n( 'item', 'items', $media ) );
 			} else {
 				echo "—";	
 			}

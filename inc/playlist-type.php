@@ -50,7 +50,7 @@ class CED_Playlist_Type extends CED_Post_Type {
 			'exclude_from_search' => false,
 			'publicly_queryable'  => true,
 			'query_var'           => 'playlist',
-			'rewrite'             => $rewrite,
+			'rewrite'             => false,
 			'capability_type'     => 'post',
 			'menu_icon'           => 'dashicons-video-alt3'
 		);
@@ -75,11 +75,7 @@ class CED_Playlist_Type extends CED_Post_Type {
 			'choose_from_most_used'      => __( 'Choose from the most used playlist types', 'cedmc' ),
 			'not_found'                  => __( 'Not Found', 'cedmc' ),
 		);
-		$rewrite = array(
-			'slug'                       => 'playlist-type',
-			'with_front'                 => true,
-			'hierarchical'               => false,
-		);
+		$rewrite = false;
 		$args = array(
 			'labels'                     => $labels,
 			'hierarchical'               => false,
@@ -97,6 +93,53 @@ class CED_Playlist_Type extends CED_Post_Type {
 	function populate_taxonomy() {
 		wp_insert_term( 'Audio Playlists', 'playlist_type', array( 'slug' => 'audio' ) );	
 		wp_insert_term( 'Video Playlists', 'playlist_type', array( 'slug' => 'video' ) );		
+	}
+	
+	function setup_rewrite_api() {
+		//Query vars/tags	
+		add_rewrite_tag( '%media_in_playlist%', '([^/]+)' );
+		add_rewrite_tag( '%playlist_type%', '(audio|video)' );	
+		
+		$structs = array(
+			'playlist/%playlist_type%/',
+			'playlist/'
+			
+		);
+		
+		$endpoints = array(
+			'%year%/%monthnum%/%day%/' ,
+			'%year%/%monthnum%/',
+			'%year%/',
+		);
+		
+		foreach( $structs as $struct ) {
+			foreach( $endpoints as $endpoint ) {
+				$this->struct_to_rewrite( $struct . $endpoint );	
+			}
+			$this->struct_to_rewrite( $struct );	
+		}
+		$this->struct_to_rewrite( 'playlist/%playlist_type%/%postname%/', false, false );
+		add_permastruct( 'playlist', 'playlist/%playlist_type%/%postname%/', array( 'walk_dirs' => false, 'endpoints'=>false ) );
+	}
+	
+	function create_permalink( $permalink, $post, $leavename, $sample ) {		
+		$permalink = parent::create_permalink( $permalink, $post, $leavename, $sample );
+		$rewritecode = array(
+			'%playlist_type%',
+		);
+		
+		if ( '' != $permalink && !in_array( $post->post_status, array('draft', 'pending', 'auto-draft') ) ) {
+			$type = 'audio';
+			if( strpos($permalink, '%playlist_type%') !== false ) {
+				$type = get_playlist_type( $post );	
+			}
+			
+			$rewritereplace = array(
+				$type
+			);
+			$permalink = str_replace( $rewritecode, $rewritereplace, $permalink );
+		}
+		return $permalink;		
 	}
 	
 	function parse_query( $query ) {
