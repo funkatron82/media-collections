@@ -170,7 +170,7 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 				<div class="wpview-overlay"></div>
 		<# } else { #>
 				<div class="wpview-error">
-						<div class="dashicons dashicons-video-alt3"></div><p><?php _e( 'No items found.' ); ?></p>
+						<div class="dashicons dashicons-video-alt3"></div><p><?php _e( 'No items found.', cedmc ); ?></p>
 				</div>
 		<# } #>
 		</script>
@@ -181,3 +181,13 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 	
 }
 endif;
+
+function cedmc_save_playlist( $id, $playlist, $update ) {
+	$types = get_the_terms( $id, 'playlist_type' );
+	if( empty( $types ) ) {
+		wp_set_object_terms( $id, 'audio', 'playlist_type' );	
+	}
+	
+}
+
+add_action( 'save_post_playlist', 'cedmc_save_playlist', 10, 3 );
