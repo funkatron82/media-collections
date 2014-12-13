@@ -133,7 +133,6 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 		$playlist =  isset( $_REQUEST['id'] ) ? intval( $_REQUEST['id'] ) : 0;
 		wp_send_json_success( $this->get_data( $playlist ) );		
 	}
-
 	
 	function print_templates() {
 		?>
@@ -181,13 +180,3 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 	
 }
 endif;
-
-function cedmc_save_playlist( $id, $playlist, $update ) {
-	$types = get_the_terms( $id, 'playlist_type' );
-	if( empty( $types ) ) {
-		wp_set_object_terms( $id, 'audio', 'playlist_type' );	
-	}
-	
-}
-
-add_action( 'save_post_playlist', 'cedmc_save_playlist', 10, 3 );

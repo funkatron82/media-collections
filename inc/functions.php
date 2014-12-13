@@ -47,8 +47,10 @@ function get_playlist_type( $playlist ) {
 	
 	$types = get_the_terms( $playlist->ID, 'playlist_type' );
 
-	if ( empty( $types ) )	               
+	if ( empty( $types ) ) {              
+		wp_set_object_terms( $playlist->ID, 'audio', 'playlist_type' );
 		return 'audio';
+	}
 	
 	$type = array_shift( $types );	
 	
