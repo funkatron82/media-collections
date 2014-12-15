@@ -1,12 +1,13 @@
 window.ced = window.ced || {};
 
 ( function($){
-	var views = ced.mediaCollections.views, Toolbar, GalleryToolbar, PlaylistToolbar, GalleryPreview, PlaylistPreview;
+	var views = ced.mediaCollections.views, Toolbar, GalleryToolbar, PlaylistToolbar, GalleryPreview, PlaylistPreview, GalleryFeatured;
 	_.extend( views, { mediaCollection: {}, gallery: {}, playlist: {} } );
 	
 	Toolbar = views.mediaCollection.Toolbar = wp.Backbone.View.extend( {
 		initialize: function( options ) {
-			this.model.on( 'change', this.render, this );	
+			this.listenTo( this.model, 'change', this.render );
+			//this.model.on( 'change', this.render, this );	
 		},
 				 
 		events: function() { 
@@ -113,10 +114,9 @@ window.ced = window.ced || {};
 		initialize: function( options ) {
 			Toolbar.prototype.initialize.apply(this);
 			this.type = this.model.type || 'audio';
-			this.model.on( 'change:type', function() {
+			this.listenTo( this.model, 'change:type', function() {
 				this.type = this.model.type;
-			}, this );	
-			
+			} );
 		},
 		
 		events: function() {
@@ -133,7 +133,7 @@ window.ced = window.ced || {};
 	GalleryPreview = views.gallery.Preview = wp.Backbone.View.extend( {
 		template: wp.template( 'editor-gallery' ),
 		initialize: function( options ) {
-			this.model.on( 'change', this.render, this );
+			this.listenTo( this.model, 'change', this.render );
 		},
 		render: function() {
 			var attrs = _.clone( this.model.attributes ),
@@ -182,7 +182,7 @@ window.ced = window.ced || {};
 	PlaylistPreview = views.playlist.Preview = wp.Backbone.View.extend( {
 		template: wp.template( 'cedmc-playlist' ),
 		initialize: function( options ) {
-			this.model.on( 'change', this.render, this );
+			this.listenTo( this.model, 'change', this.render );
 		},
 		
 		render: function() {
@@ -272,5 +272,11 @@ window.ced = window.ced || {};
 				new WPPlaylistView({ metadata: options, el:  self.$el.find( '.wp-playlist' ).get(0)});
 			} );
 		}
+	} );
+	
+	GalleryFeatured = views.gallery.Featured = wp.Backbone.View.extend( {
+		render: function() {
+		},
+		
 	} );
 } )( jQuery );
