@@ -7,7 +7,6 @@ window.ced = window.ced || {};
 	Toolbar = views.mediaCollection.Toolbar = wp.Backbone.View.extend( {
 		initialize: function( options ) {
 			this.listenTo( this.model, 'change', this.render );
-			//this.model.on( 'change', this.render, this );	
 		},
 				 
 		events: function() { 
@@ -18,14 +17,12 @@ window.ced = window.ced || {};
 		
 		update: function() {
 			var frame = this.frame(), 
-				self = this, 
-				model = this.model, 
 				attrs;
-			frame.on( 'update', function( media ) {
-				var shortcode = wp.media[self.tag].shortcode( media );
-				attrs = _.defaults( shortcode.attrs.named, model.defaults );
+			this.listenTo( frame, 'update', function( media ) {
+				var shortcode = wp.media[this.tag].shortcode( media );
+				attrs = _.defaults( shortcode.attrs.named, this.model.defaults );
 				attrs = _.omit( attrs, 'id' );
-				model.save( attrs );
+				this.model.save( attrs );
 			} );
 		},
 		frame: function() {
