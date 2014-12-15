@@ -76,6 +76,5 @@ window.ced = window.ced || {};
 		tag: 'playlist',
 		defaults: wp.media.playlist.defaults
 	} );
-
 	
 } )(jQuery);

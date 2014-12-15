@@ -11,6 +11,23 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		add_action( 'wp_ajax_cedmc_update_gallery', array( $this, 'update_gallery' ) );	
 		add_action( 'edit_form_after_title', array( $this, 'show_gallery')  );
 		add_action( 'print_media_templates', array( $this, 'print_templates' ) );
+		add_action( 'add_meta_boxes_' . $this->post_type, array( $this, 'add_featured') );
+	}
+	
+	function add_featured( $gallery ) {
+		add_meta_box( 
+			'gallery-featured',
+			__( 'Featured Image', 'cedmc' ),
+			array( $this, 'render_featured' ),
+			$this->post_type,
+			'side',
+			'default'
+		);	
+	}
+	
+	function render_featured() {
+		?> <div id="cedmc-featured"></div>
+        <?php
 	}
 	
 	function add_columns( $columns ) {		
@@ -49,7 +66,8 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 			'ids' => (array) get_gallery_media_ids( $gallery ),
 			'nonces' => array(
 				'update'	=> wp_create_nonce( 'cedmc-update_' . $gallery->ID ),
-			)
+			), 
+			'featured_id' => get_post_thumbnail_id( $gallery->ID )
 		);
 		$meta = array_merge( $meta, (array) get_gallery_meta( $gallery ) );		
 		return $meta;
@@ -100,6 +118,11 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 			unset( $changes['ids'] );
 		}
 		
+		if( $changes['featured_id'] ) {
+			set_post_thumbnail( $gallery, $changes['featured_id'] );
+			unset( $changes['featured_id'] );	
+		}
+		
 		if( $changes ) {
 			$old = get_gallery_meta( $gallery );
 			$new = wp_parse_args( $changes, $old );
@@ -114,7 +137,6 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		wp_send_json_success( $this->get_data( $gallery ) );		
 	}
 
-	
 	function print_templates() {
 		?>
         <script type="text/html" id="tmpl-cedmc-gallery-toolbar"> 
