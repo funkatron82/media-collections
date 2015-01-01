@@ -157,12 +157,14 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		</script>
         
 		<script type="text/html" id="tmpl-cedmc-featured-empty"> 
-			<a href="#" class="set"><?php _e( 'Set featured image', 'cedmc' ); ?></a>
+			<p class="hide-if-no-js">
+				<a href="#" class="set"><?php _e( 'Set featured image', 'cedmc' ); ?></a>
+			</p>
 		</script>
         
         <script type="text/html" id="tmpl-cedmc-featured-set"> 
 			<a href="#" class="set"><img src="{{{ data.url }}}"></a>
-			<p>
+			<p class="hide-if-no-js">
 				<a href="#" class="remove"><?php _e( 'Remove featured image', 'cedmc' ); ?></a>
 			</p>
 		</script>

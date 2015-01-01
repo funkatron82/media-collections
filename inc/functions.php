@@ -1,16 +1,14 @@
 <?php
 //Helper functions
 
-function get_gallery_media( $gallery ) {
+function get_gallery_media( $gallery, $args = array() ) {
 	$gallery = get_post( $gallery );
-	
-	return new WP_Query( array(
-	  'media_in_gallery' => $gallery->ID
-	) );	
+	$args = wp_parse_args( array( 'media_in_gallery' => $gallery->ID ), $args );
+	return new WP_Query( $args );	
 }
 
-function get_gallery_media_ids( $gallery ) {
-	$media = get_gallery_media( $gallery );
+function get_gallery_media_ids( $gallery, $args = array() ) {
+	$media = get_gallery_media( $gallery, $args );
 	return wp_list_pluck( $media->posts, 'ID' );	
 }
 
@@ -21,16 +19,14 @@ function get_gallery_meta( $gallery ) {
 }
 
 //Playlists
-function get_playlist_media( $playlist ) {
+function get_playlist_media( $playlist, $args = array() ) {
 	$playlist = get_post( $playlist );
-
-	return new WP_Query( array(
-	  'media_in_playlist' => $playlist->ID
-	) );	
+	$args = wp_parse_args( array( 'media_in_playlist' => $playlist->ID ), $args );
+	return new WP_Query( $args );	
 }
 
-function get_playlist_media_ids( $playlist ) {
-	$media = get_playlist_media( $playlist );
+function get_playlist_media_ids( $playlist, $args = array() ) {
+	$media = get_playlist_media( $playlist, $args );
 	return wp_list_pluck( $media->posts, 'ID' );	
 }
 

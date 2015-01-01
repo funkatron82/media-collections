@@ -93,3 +93,7 @@
 	max-width: 100%;
 	height:auto;
 }
+
+#cedmc-featured p:last-child {
+	margin-bottom: 1px!important;	
+}
