@@ -3,6 +3,6 @@ jQuery( document ).ready( function( $ ) {
 	gallery.fetch().done( function( data ) {
 		galleryToolbar = new ced.mediaCollections.views.gallery.Toolbar({el: '#cedmc-toolbar', model:gallery}).render();
 		galleryPreview = new ced.mediaCollections.views.gallery.Preview({el: '#cedmc-preview', model:gallery}).render();
-		galleryFeatured = new ced.mediaCollections.views.gallery.Featured({el: '#cedmc-featured', model:gallery}).render();
+		galleryFeatured = new ced.mediaCollections.views.gallery.Featured({el: '#cedmc-featured', model:gallery});
 	} );
 } );

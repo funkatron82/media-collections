@@ -88,3 +88,8 @@
 	border: none;
 	padding: 0;
 }
+
+#cedmc-featured img {
+	max-width: 100%;
+	height:auto;
+}

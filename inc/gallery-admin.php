@@ -25,7 +25,7 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		);	
 	}
 	
-	function render_featured() {
+	function render_featured( $post ) {
 		?> <div id="cedmc-featured"></div>
         <?php
 	}
@@ -69,7 +69,7 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 			), 
 			'featured_id' => get_post_thumbnail_id( $gallery->ID )
 		);
-		$meta = array_merge( $meta, (array) get_gallery_meta( $gallery ) );		
+		$meta = wp_parse_args( $meta, (array) get_gallery_meta( $gallery ) );		
 		return $meta;
 	}
 	
@@ -112,13 +112,14 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		$changes =  isset( $_REQUEST['changes'] ) ? (array) $_REQUEST['changes'] : array();
 		check_ajax_referer( 'cedmc-update_' . $gallery );
 		
-		if( $changes['ids'] ) {
+		if( isset( $changes['ids'] ) ) {
 			$this->remove_media_ids( $gallery );	
 			$this->set_media_ids( $gallery, $changes['ids'] );
 			unset( $changes['ids'] );
 		}
 		
-		if( $changes['featured_id'] ) {
+		if( isset( $changes['featured_id'] ) ) {
+			delete_post_thumbnail( $gallery );
 			set_post_thumbnail( $gallery, $changes['featured_id'] );
 			unset( $changes['featured_id'] );	
 		}
@@ -153,6 +154,17 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 			{{{ data.ids.length }}} <?php _e( ' items ', 'cedmc' ); ?>
 		</div>
 		
+		</script>
+        
+		<script type="text/html" id="tmpl-cedmc-featured-empty"> 
+			<a href="#" class="set"><?php _e( 'Set featured image', 'cedmc' ); ?></a>
+		</script>
+        
+        <script type="text/html" id="tmpl-cedmc-featured-set"> 
+			<a href="#" class="set"><img src="{{{ data.url }}}"></a>
+			<p>
+				<a href="#" class="remove"><?php _e( 'Remove featured image', 'cedmc' ); ?></a>
+			</p>
 		</script>
 		<?php 
 	}

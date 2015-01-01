@@ -16,11 +16,10 @@ window.ced = window.ced || {};
 		},
 		
 		update: function() {
-			var frame = this.frame(), 
-				attrs;
+			var frame = this.frame();
 			this.listenTo( frame, 'update', function( media ) {
-				var shortcode = wp.media[this.tag].shortcode( media );
-				attrs = _.defaults( shortcode.attrs.named, this.model.defaults );
+				var shortcode = wp.media[this.tag].shortcode( media ),
+					attrs = _.defaults( shortcode.attrs.named, this.model.defaults );
 				attrs = _.omit( attrs, 'id' );
 				this.model.save( attrs );
 			} );
@@ -272,8 +271,108 @@ window.ced = window.ced || {};
 	} );
 	
 	GalleryFeatured = views.gallery.Featured = wp.Backbone.View.extend( {
-		render: function() {
+		template: {
+			empty: wp.template( 'cedmc-featured-empty' ),
+			set: wp.template( 'cedmc-featured-set' )
 		},
 		
+		initialize: function( options ) {
+			this.render();
+			this.listenTo( this.model, 'change:ids', function() {
+				this.render();
+			} )
+		},
+		
+		render: function() {
+			var featured = this.model.get( 'featured_id' ), 
+				ids = this.model.get( 'ids' ), 
+				image = this.image, 
+				self = this,
+				options = {};
+
+			if(  ids.length == 0 ) {
+				this.$el.html(' ');
+				return;	
+			}
+			
+			if( featured ) {
+				if( ! image ) {
+					image = wp.media.attachment( featured );
+					image.fetch().done(function() {
+						self.image = image;
+						options.url = image.get('url');
+						self.$el.html( self.template.set( options ) );
+					} );		
+				} else {
+					options.url = image.get('url');
+					this.$el.html( this.template.set( options ) );
+				}
+				
+			} else {
+				this.$el.html( this.template.empty( options ) );
+			}
+			
+		},
+		
+		events: {
+			'click .set' : function() {
+				this.frame( ).open();
+				return false;	
+			}, 
+			'click .remove': function() {
+				var self = this;
+				this.model.save( { 'featured_id': '' } ).done( function() {
+					self.image = '';
+					self.render();
+				} );
+				
+				return false;
+			}
+		},
+		frame: function() {
+			var self = this, 
+				ids = this.model.get( 'ids' );
+			wp.media.view.settings.post.featuredImageId = this.model.get( 'featured_id' );
+
+			if ( this._frame ) {
+				this._frame.dispose();
+			}
+
+			this._frame = wp.media({
+				state: 'featured-image',
+				states: [ new wp.media.controller.FeaturedImage( { 
+					library:  wp.media.query({ type: 'image', 'post__in': ids  })
+				} ) , new wp.media.controller.EditImage() ]
+			});
+
+			this._frame.on( 'toolbar:create:featured-image', function( toolbar ) {
+				/**
+				 * @this wp.media.view.MediaFrame.Select
+				 */
+				this.createSelectToolbar( toolbar, {
+					text: wp.media.view.l10n.setFeaturedImage
+				});
+			}, this._frame );
+
+			this._frame.on( 'content:render:edit-image', function() {
+				var selection = this.state('featured-image').get('selection'),
+					view = new wp.media.view.EditImage( { model: selection.single(), controller: this } ).render();
+
+				this.content.set( view );
+
+				// after bringing in the frame, load the actual editor via an ajax call
+				view.loadEditor();
+
+			}, this._frame );
+
+			this._frame.state('featured-image').on( 'select', function() {
+				var selection = this.get('selection').single();
+				self.model.save( {'featured_id': selection.get( 'id' ) } ).done( function() {
+					self.image = selection;
+					self.render();
+				} );
+			} );
+			return this._frame;
+		},
 	} );
 } )( jQuery );
