@@ -20,25 +20,15 @@ require_once( CEDMC_INC_DIR . 'gallery-type.php' );
 require_once( CEDMC_INC_DIR . 'gallery-admin.php' );
 require_once( CEDMC_INC_DIR . 'playlist-admin.php' );
 
-
-function cedmc_plugin_load() {
-	//Core
-	
-	//Admin
-	if( is_admin() ){
-		new CED_Gallery_Type_Admin();
-		new CED_Playlist_Type_Admin();
-	}
-	
-	//Front end
-	else{
-	}
-}
-add_action( 'plugins_loaded', 'cedmc_plugin_load' );
-
-//Post Type
+//Core
 new CED_Gallery_Type();
 new CED_Playlist_Type();
+
+//Admin
+if( is_admin() ){
+	new CED_Gallery_Type_Admin();
+	new CED_Playlist_Type_Admin();
+}
 
 //Activate
 function cedmc_activate() {
