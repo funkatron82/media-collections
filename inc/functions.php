@@ -4,7 +4,7 @@
 //Gallery
 
 /**
- * Is the post a gallery.
+ * Is the post a gallery?
  * 
  * @since 1.0.0
  *
@@ -13,7 +13,7 @@
  * @return	bool	Returns true if post is a gallery.
  */
 function is_gallery( $post = NULL ) {
-	return 'gallery' === get_post_type( $gallery );
+	return 'gallery' === get_post_type( $post );
 }
 
 /**
@@ -98,8 +98,8 @@ function is_gallery_archive() {
  *
  * @return	bool	Returns true if post is a playlist.
  */
-function is_playlist( $playlist = NULL ) {
-	return 'playlist' === get_post_type( $playlist );
+function is_playlist( $post = NULL ) {
+	return 'playlist' === get_post_type( $post );
 }
 
 /**
