@@ -54,7 +54,7 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 			return;
 		}
 			
-		$this->generate_taxonomy_select( 'playlist_type', 'playlist_type' );
+		$this->generate_taxonomy_filter( 'playlist_type' );
 	}
 	
 	function get_data( $playlist = 0 ) {

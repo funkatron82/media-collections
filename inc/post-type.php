@@ -163,6 +163,29 @@ if( !class_exists( 'CED_Post_Type' ) ) {
 		return $posts;
 	}
 	
+	function add_connected( $posts, $extra_qv = array(), $connection_type, $prop_name = 'connected', $multiple = true ){
+		if( function_exists( 'p2p_distribute_connected' ) && p2p_type( $connection_type )  ){
+			$items =& $posts;
+			$target_items = array();
+			foreach( $items as $item ) {
+				if( $item->post_type == $this->post_type ){
+					$target_items[] = $item;	
+				}
+			}
+			$extra_qv = wp_parse_args( $extra_qv,
+			 	array(
+					'connected_type' => $connection_type,
+			  		'connected_items' => $target_items,
+					'nopaging' => true
+				)
+			 );
+			$connected = new WP_Query( $extra_qv );
+			p2p_distribute_connected( $target_items, $connected->posts, $prop_name );
+			
+			return $posts;
+		}
+	}
+	
 	function label_taxonomies($name, $plural_name) {
 		$labels = array(
 			'name' => __( '' . $plural_name . '', 'taxonomy general name' ),

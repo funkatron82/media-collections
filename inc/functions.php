@@ -6,7 +6,7 @@
 /**
  * Is the post a gallery?
  * 
- * @since 1.0.0
+ * @since	1.0.0
  *
  * @param	(int|WP_Post)	$post	Post being tested.  Defaults to current post in a loop.
  *
@@ -19,7 +19,7 @@ function is_gallery( $post = NULL ) {
 /**
  * Gets media associated to gallery
  * 
- * @since 1.0.0
+ * @since 	1.0.0
  *
  * @param	(int|WP_Post)	$gallery	Gallery.
  *
@@ -44,7 +44,7 @@ function get_gallery_media( $gallery = NULL ) {
 /**
  * Gets IDs of media associated with gallery
  * 
- * @since 1.0.0
+ * @since	1.0.0
  *
  * @param	(int|WP_Post)	$gallery	Gallery.
  *
@@ -61,7 +61,7 @@ function get_gallery_media_ids( $gallery = NULL ) {
 /**
  * Gets meta data of gallery
  * 
- * @since 1.0.0
+ * @since	1.0.0
  *
  * @param	(int|WP_Post)	$gallery	Gallery.
  *
