@@ -172,6 +172,9 @@ if( !class_exists( 'CED_Post_Type' ) ) {
 						$indexed_list[$post->ID] = $post;	
 					}
 				}
+				if( empty( $indexed_list ) ) {
+					return;
+				}
 				$extra_qv = wp_parse_args( $extra_qv,
 					array(
 						'connected_type' => $connection_type,
@@ -182,6 +185,7 @@ if( !class_exists( 'CED_Post_Type' ) ) {
 				$connected = new WP_Query( $extra_qv );
 				
 				$groups = scb_list_group_by( $connected->posts, '_p2p_get_other_id' );
+				
 				foreach ( $groups as $outer_item_id => $connected_items ) {
 					$indexed_list[ $outer_item_id ]->$prop_name = $multiple ? $connected_items : array_shift( $connected_items );
 				}
