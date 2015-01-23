@@ -54,4 +54,4 @@ function cedmc_enqueue_scripts( $hook ) {
 	
 	wp_register_style( 'cedmc', CEDMC_URL . 'css/media-collections.css', array() );
 }
-add_action( 'admin_enqueue_scripts', 'cedmc_enqueue_scripts' );
+add_action( 'admin_enqueue_scripts', 'cedmc_enqueue_scripts', 5 );

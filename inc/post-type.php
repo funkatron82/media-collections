@@ -163,11 +163,12 @@ if( !class_exists( 'CED_Post_Type' ) ) {
 			return $posts;
 		}
 		
-		function add_connected( &$posts, $extra_qv = array(), $connection_type, $prop_name = 'connected', $multiple = true ){
+		function add_connected( &$posts, $connection_type, $prop_name = 'connected', $extra_qv = array(), $multiple = true ){
 			if( function_exists( 'p2p_distribute_connected' ) && p2p_type( $connection_type )  ){
 				$indexed_list = array();
 				foreach( $posts as $post ) {
 					if( $post->post_type == $this->post_type ){
+						$post->$prop_name = $multiple ? array() : '';
 						$indexed_list[$post->ID] = $post;	
 					}
 				}
@@ -186,28 +187,7 @@ if( !class_exists( 'CED_Post_Type' ) ) {
 				}
 			}
 		}
-		
-		function label_taxonomies($name, $plural_name) {
-			$labels = array(
-				'name' => __( '' . $plural_name . '', 'taxonomy general name' ),
-				'singular_name' => __( '' . $name . '', 'taxonomy singular name' ),
-				'search_items' =>  __( 'Search ' . $plural_name . '' ),
-				'popular_items' => __( 'Popular ' . $plural_name . '' ),
-				'all_items' => __( 'All ' . $plural_name . '' ),
-				'parent_item' => null,
-				'parent_item_colon' => null,
-				'edit_item' => __( 'Edit ' . $name . '' ), 
-				'update_item' => __( 'Update ' . $name . '' ),
-				'add_new_item' => __( 'Add New ' . $name . '' ),
-				'new_item_name' => __( 'New ' . $name . ' Name' ),
-				'separate_items_with_commas' => __( 'Separate ' . strtolower($plural_name) . ' with commas' ),
-				'add_or_remove_items' => __( 'Add or remove ' . strtolower($plural_name) . '' ),
-				'choose_from_most_used' => __( 'Choose from the most used ' . strtolower($plural_name) . '' ),
-				'menu_name' => __( '' . $plural_name . '' ),
-			);
-			
-			return $labels;			
-		}
+
 		
 		function slug_from_id( $id, $post_type ) {
 			global $wpdb;
@@ -245,7 +225,7 @@ if( !class_exists( 'CED_Post_Type' ) ) {
 			return $where;
 		}
 		
-		function get_next_post_sort($sort ) {
+		function get_next_post_sort( $sort ) {
 			global $post;
 			if($post->post_type == $this->post_type)
 				return $this->get_adjacent_post_sort($sort, false);
@@ -253,7 +233,7 @@ if( !class_exists( 'CED_Post_Type' ) ) {
 				return $sort;
 		}
 		
-		function get_previous_post_sort($sort) {
+		function get_previous_post_sort( $sort ) {
 			global $post;
 			if($post->post_type == $this->post_type)
 				return $this->get_adjacent_post_sort($sort, true);

@@ -18,9 +18,7 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 			return;
 		}
 
-		wp_register_script( 'cedmc-playlist', CEDMC_URL . 'js/playlist.js', array( 'backbone', 'cedmc-models', 'cedmc-views' ) );
-		wp_enqueue_script( 'cedmc-playlist' );
-		
+		wp_enqueue_script( 'cedmc-playlist', CEDMC_URL . 'js/playlist.js', array( 'backbone', 'cedmc-models', 'cedmc-views' ) );		
 		wp_enqueue_style( 'cedmc' );
 	}
 	

@@ -80,7 +80,7 @@ class CED_Playlist_Type extends CED_Post_Type {
 			'labels'                     => $labels,
 			'hierarchical'               => false,
 			'public'                     => true,
-			'show_ui'                    => false,
+			'show_ui'                    => true,
 			'show_admin_column'          => false,
 			'show_in_nav_menus'          => true,
 			'show_tagcloud'              => true,
@@ -168,18 +168,8 @@ class CED_Playlist_Type extends CED_Post_Type {
 					$playlists[$type][] = $item; 
 				}
 			}
-			
-			foreach( array( 'audio', 'video' ) as $type ) {
-				if( ! empty( $playlists[$type] ) ) {
-					$media = new WP_Query( array(
-					  'connected_type' => 'playlist_to_media',
-					  'connected_items' => $playlists[$type],
-					  'post_mime_type' => $type
-					) );
-					
-					p2p_distribute_connected( $playlists[$type], $media->posts, 'media' );
-				}
-			}
+			$this->add_connected( $playlists['audio'], 'playlist_to_media', 'media',  array( 'post_mime_type'=>'audio' ), true );
+			$this->add_connected( $playlists['video'], 'playlist_to_media', 'media',  array( 'post_mime_type'=>'video' ), true );
 		}
 		add_filter( 'the_posts', array( $this, 'process_posts' ), 10, 2 );
 		return $posts; 			

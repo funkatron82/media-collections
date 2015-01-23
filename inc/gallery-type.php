@@ -84,7 +84,7 @@ class CED_Gallery_Type extends CED_Post_Type {
 	
 	function process_posts( $posts, $query ) {
 		remove_filter( 'the_posts', array( $this, 'process_posts' ) );
-		$this->add_connected( $posts, array(), 'gallery_to_media', 'media', true );
+		$this->add_connected( $posts, 'gallery_to_media', 'media',  array(), true );
 		add_filter( 'the_posts', array( $this, 'process_posts' ), 10, 2 );
 		return $posts; 			
 	}
