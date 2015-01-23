@@ -84,25 +84,7 @@ class CED_Gallery_Type extends CED_Post_Type {
 	
 	function process_posts( $posts, $query ) {
 		remove_filter( 'the_posts', array( $this, 'process_posts' ) );
-		if( function_exists( 'p2p_distribute_connected' ) && p2p_type( 'gallery_to_media' )  ) { 
-			$items =& $posts;
-			$galleries = array();
-			
-			foreach( $items as $item ) {
-				if( 'gallery' === $item->post_type ) {
-					$galleries[] = $item;	
-				}
-			}
-			
-			if( !empty( $galleries ) ) {
-				$media = new WP_Query( array(
-				  'connected_type' => 'gallery_to_media',
-				  'connected_items' => $galleries,
-				) );
-				
-				p2p_distribute_connected( $galleries, $media->posts, 'media' );
-			}
-		}
+		$this->add_connected( $posts, array(), 'gallery_to_media', 'media', true );
 		add_filter( 'the_posts', array( $this, 'process_posts' ), 10, 2 );
 		return $posts; 			
 	}
