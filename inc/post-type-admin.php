@@ -11,7 +11,8 @@ if( !class_exists( 'CED_Post_Type_Admin' ) ) {
 						
 			//Meta Boxes
 			add_action( 'add_meta_boxes_' . $this->post_type, array( $this, 'add_meta_boxes' ) );
-			add_action( 'admin_menu', array( $this, 'remove_meta_boxes' ) );		
+			add_action( 'admin_menu', array( $this, 'remove_meta_boxes' ) );
+			add_action( 'edit_form_after_title', array( $this, 'print_post_nonce' )  );		
 			
 			//Filtering
 			add_action( 'restrict_manage_posts', array( $this, 'restrict_posts' ) );
@@ -46,6 +47,27 @@ if( !class_exists( 'CED_Post_Type_Admin' ) ) {
 				remove_meta_box( 'tagsdiv-' . $tax, $this->post_type, 'core' );	
 				remove_meta_box( $tax . 'div', $this->post_type, 'core' );	
 			}
+		}
+		
+		function print_post_nonce( $post ){
+			if( $this->post_type !== $post->post_type )
+				return;
+				
+			wp_nonce_field( "ced-post-nonce{$post->ID}", "ced_nonce_{$this->post_type}" );
+		}
+		
+		function verify_save( $post, $autosave = false ) {
+			$post = get_post( $post );
+			$nonce = isset( $_POST["ced_nonce_{$this->post_type}"] ) ? sanitize_key( $_POST["ced_nonce_{$this->post_type}"] ) : '';	
+			
+			if ( empty( $_POST["ced_nonce_{$this->post_type}"] ) || ! wp_verify_nonce( $nonce, "ced-post-nonce{$post->ID}" ) )
+				return false;
+				
+			// Autosave
+			if ( defined( 'DOING_AUTOSAVE' ) && ! $autosave )
+				return false;
+			
+			return true;
 		}
 		
 		function enqueue_scripts( $hook ) {
