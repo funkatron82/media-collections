@@ -23,7 +23,7 @@ function is_gallery( $post = NULL ) {
  *
  * @param	(int|WP_Post)	$gallery	Gallery.
  *
- * @return	array	Media in gallery.
+ * @return	array	Returns media connected to gallery.
  */
 function get_gallery_media( $gallery = NULL ) {
 	$gallery = get_post( $gallery );
@@ -81,7 +81,7 @@ function get_gallery_meta( $gallery = NULL ) {
  * 
  * @since 1.0.0
  *
- * @return	bool	Returns true if it is a gallery archive
+ * @return	bool	Returns true if current archive is a gallery archive
  */
 function is_gallery_archive() {
 	return is_post_type_archive( 'gallery' ); 

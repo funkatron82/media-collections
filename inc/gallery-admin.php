@@ -107,10 +107,21 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 		}
 	}
 
-	function update_gallery() {
-		$gallery =  isset( $_REQUEST['id'] ) ? intval( $_REQUEST['id'] ) : 0;	
-		$changes =  isset( $_REQUEST['changes'] ) ? (array) $_REQUEST['changes'] : array();
-		check_ajax_referer( 'cedmc-update_' . $gallery );
+	function update_gallery() {		
+		if ( ! isset( $_REQUEST['id'] ) || ! isset( $_REQUEST['changes'] ) )
+			wp_send_json_error();
+
+		if ( ! $id = absint( $_REQUEST['id'] ) )
+			wp_send_json_error();
+	
+		check_ajax_referer( 'cedmc-update_' . $id );
+	
+		if ( ! current_user_can( 'edit_post', $id ) )
+			wp_send_json_error();
+	
+		$changes 	= $_REQUEST['changes'];
+		$gallery    = get_post( $id );
+		
 		
 		if( isset( $changes['ids'] ) ) {
 			$this->remove_media_ids( $gallery );	
@@ -123,12 +134,34 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 			set_post_thumbnail( $gallery, $changes['featured_id'] );
 			unset( $changes['featured_id'] );	
 		}
+	
+		$changes = array_intersect_key( $changes, array_flip( array( 'order',
+				'orderby',
+				'itemtag',
+				'icontag',
+				'captiontag',
+				'columns',
+				'size',
+				'include',
+				'exclude',
+				'link'
+		) ) );
+		$meta = get_gallery_meta( $gallery );
+		$meta = wp_parse_args( $meta, array(
+				'order'      => 'ASC',
+				'orderby'    => 'post__in',
+				'itemtag'    => $html5 ? 'figure'     : 'dl',
+				'icontag'    => $html5 ? 'div'        : 'dt',
+				'captiontag' => $html5 ? 'figcaption' : 'dd',
+				'columns'    => 3,
+				'size'       => 'gallery_preview',
+				'include'    => '',
+				'exclude'    => '',
+				'link'       => ''
+		));
+		$meta = wp_parse_args( $changes, $meta );
+		update_post_meta( $gallery->ID, '_gallery_metadata', $meta );
 		
-		if( $changes ) {
-			$old = get_gallery_meta( $gallery );
-			$new = wp_parse_args( $changes, $old );
-			update_post_meta( $gallery, '_gallery_metadata', $new );
-		}
 		
 		wp_send_json_success( $this->get_data( $gallery ) );
 	}

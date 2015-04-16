@@ -101,12 +101,23 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 		}
 	}
 
-	function update_playlist() {
-		$playlist =  isset( $_REQUEST['id'] ) ? intval( $_REQUEST['id'] ) : 0;	
-		$changes =  isset( $_REQUEST['changes'] ) ? (array) $_REQUEST['changes'] : array();
-		check_ajax_referer( 'cedmc-update_' . $playlist );
+	function update_playlist() {		
+		if ( ! isset( $_REQUEST['id'] ) || ! isset( $_REQUEST['changes'] ) )
+			wp_send_json_error();
+
+		if ( ! $id = absint( $_REQUEST['id'] ) )
+			wp_send_json_error();
+	
+		check_ajax_referer( 'cedmc-update_' . $id );
+	
+		if ( ! current_user_can( 'edit_post', $id ) )
+			wp_send_json_error();
+	
+		$changes 	= $_REQUEST['changes'];
+		$playlist    = get_post( $id );
 		
-		if( $changes['ids'] ) {
+		
+		if( isset( $changes['ids'] ) ) {
 			$this->remove_media_ids( $playlist );	
 			$this->set_media_ids( $playlist, $changes['ids'] );
 			unset( $changes['ids'] );
@@ -116,13 +127,32 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 			wp_set_object_terms( $playlist, $changes['type'], 'playlist_type' );
 			unset( $changes['type'] );
 		}
-		
-		if( $changes ) {
-			$old = get_gallery_meta( $playlist );
-			$new = wp_parse_args( $changes, $old );
-			unset( $new['type'] );
-			update_post_meta( $playlist, '_playlist_metadata', $new );
-		}
+	
+		$changes = array_intersect_key( $changes, array_flip( array( 
+			'order',
+			'orderby',
+			'style',
+			'tracklist',
+			'tracknumbers',
+			'images',
+			'artists',
+			'include',
+			'exclude'
+		) ) );
+		$meta = get_playlist_meta( $playlist );
+		$meta = wp_parse_args( $meta, array(
+				'order'         => 'ASC',
+				'orderby'       => 'menu_order ID',
+				'include'       => '',
+				'exclude'   	=> '',
+				'style'         => 'light',
+				'tracklist' 	=> true,
+				'tracknumbers' 	=> true,
+				'images'        => true,
+				'artists'       => true
+		));
+		$meta = wp_parse_args( $changes, $meta );
+		update_post_meta( $playlist->ID, '_playlist_metadata', $meta );
 
 		wp_send_json_success( $this->get_data( $playlist ) );
 	}
