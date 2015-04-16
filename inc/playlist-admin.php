@@ -141,15 +141,15 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 		) ) );
 		$meta = get_playlist_meta( $playlist );
 		$meta = wp_parse_args( $meta, array(
-				'order'         => 'ASC',
-				'orderby'       => 'menu_order ID',
-				'include'       => '',
-				'exclude'   	=> '',
-				'style'         => 'light',
-				'tracklist' 	=> true,
-				'tracknumbers' 	=> true,
-				'images'        => true,
-				'artists'       => true
+			'order'         => 'ASC',
+			'orderby'       => 'menu_order ID',
+			'include'       => '',
+			'exclude'   	=> '',
+			'style'         => 'light',
+			'tracklist' 	=> true,
+			'tracknumbers' 	=> true,
+			'images'        => true,
+			'artists'       => true
 		));
 		$meta = wp_parse_args( $changes, $meta );
 		update_post_meta( $playlist->ID, '_playlist_metadata', $meta );
