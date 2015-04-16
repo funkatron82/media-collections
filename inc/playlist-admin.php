@@ -127,20 +127,7 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 			wp_set_object_terms( $playlist, $changes['type'], 'playlist_type' );
 			unset( $changes['type'] );
 		}
-	
-		$changes = array_intersect_key( $changes, array_flip( array( 
-			'order',
-			'orderby',
-			'style',
-			'tracklist',
-			'tracknumbers',
-			'images',
-			'artists',
-			'include',
-			'exclude'
-		) ) );
-		$meta = get_playlist_meta( $playlist );
-		$meta = wp_parse_args( $meta, array(
+		$defaults = array(
 			'order'         => 'ASC',
 			'orderby'       => 'menu_order ID',
 			'include'       => '',
@@ -150,7 +137,10 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 			'tracknumbers' 	=> true,
 			'images'        => true,
 			'artists'       => true
-		));
+		);
+		$changes = array_intersect_key( $changes, $defaults );
+		$meta = get_playlist_meta( $playlist );
+		$meta = wp_parse_args( $meta, $defaults );
 		$meta = wp_parse_args( $changes, $meta );
 		update_post_meta( $playlist->ID, '_playlist_metadata', $meta );
 

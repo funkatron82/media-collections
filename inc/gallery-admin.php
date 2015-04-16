@@ -134,20 +134,7 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 			set_post_thumbnail( $gallery, $changes['featured_id'] );
 			unset( $changes['featured_id'] );	
 		}
-	
-		$changes = array_intersect_key( $changes, array_flip( array( 'order',
-			'orderby',
-			'itemtag',
-			'icontag',
-			'captiontag',
-			'columns',
-			'size',
-			'include',
-			'exclude',
-			'link'
-		) ) );
-		$meta = get_gallery_meta( $gallery );
-		$meta = wp_parse_args( $meta, array(
+		$defaults = array(
 			'order'      => 'ASC',
 			'orderby'    => 'post__in',
 			'itemtag'    => $html5 ? 'figure'     : 'dl',
@@ -158,7 +145,11 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 			'include'    => '',
 			'exclude'    => '',
 			'link'       => ''
-		));
+		);
+	
+		$changes = array_intersect_key( $changes, $defaults );
+		$meta = get_gallery_meta( $gallery );
+		$meta = wp_parse_args( $meta, $defaults );
 		$meta = wp_parse_args( $changes, $meta );
 		update_post_meta( $gallery->ID, '_gallery_metadata', $meta );
 		
