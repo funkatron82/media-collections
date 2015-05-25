@@ -7,8 +7,6 @@ class CED_Playlist_Type_Admin extends CED_Post_Type_Admin {
 	
 	function __construct() {
 		parent::__construct();
-		add_action( 'wp_ajax_cedmc_read_playlist', array( $this, 'read_playlist' ) );	
-		add_action( 'wp_ajax_cedmc_update_playlist', array( $this, 'update_playlist' ) );	
 		add_action( 'edit_form_after_title', array( $this, 'show_playlist')  );
 		add_action( 'print_media_templates', array( $this, 'print_templates' ) );
 	}

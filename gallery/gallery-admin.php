@@ -7,8 +7,6 @@ class CED_Gallery_Type_Admin extends CED_Post_Type_Admin {
 	
 	function __construct() {
 		parent::__construct();
-		add_action( 'wp_ajax_cedmc_read_gallery', array( $this, 'read_gallery' ) );	
-		add_action( 'wp_ajax_cedmc_update_gallery', array( $this, 'update_gallery' ) );	
 		add_action( 'edit_form_after_title', array( $this, 'show_gallery')  );
 		add_action( 'print_media_templates', array( $this, 'print_templates' ) );
 		add_action( 'add_meta_boxes_' . $this->post_type, array( $this, 'add_featured') );
