@@ -12,13 +12,11 @@ License: GPL2
 
 require_once( 'config.php' );
 require_once( CEDMC_INC_DIR . 'p2p.php' );
-require_once( CEDMC_INC_DIR . 'post-type.php' );
-require_once( CEDMC_INC_DIR . 'post-type-admin.php' );
+require_once( CEDMC_INC_DIR . 'post/load.php' );
+require_once( 'gallery/load.php' );
+require_once( 'playlist/load.php' );
 require_once( CEDMC_INC_DIR . 'functions.php' );
-require_once( CEDMC_INC_DIR . 'playlist-type.php' );
-require_once( CEDMC_INC_DIR . 'gallery-type.php' );
-require_once( CEDMC_INC_DIR . 'gallery-admin.php' );
-require_once( CEDMC_INC_DIR . 'playlist-admin.php' );
+
 
 //Core
 new CED_Gallery_Type();
@@ -54,4 +52,43 @@ function cedmc_enqueue_scripts( $hook ) {
 	
 	wp_register_style( 'cedmc', CEDMC_URL . 'css/media-collections.css', array() );
 }
+
 add_action( 'admin_enqueue_scripts', 'cedmc_enqueue_scripts', 5 );
+
+function cedmc_templates(){
+		?>
+        <script type="text/html" id="tmpl-cedmc-edit-button"> 
+			<span class="dashicons dashicons-edit cedmc-icon"></span> 
+			<# if( data.ids.length > 0 ) { #>
+				<?php _e( 'Edit', 'cedmc' ); ?>
+			<# } else { #>
+				<?php _e( 'Add to', 'cedmc' ); ?>
+			<# } #>
+			
+			<# if( 'gallery' === data.type ) { #>
+				<?php _e( ' Gallery', 'cedmc' ); ?>
+			<# } else { #>
+				<?php _e( ' Playlist', 'cedmc' ); ?>
+			<# } #>
+		</script>
+        
+        <script type="text/html" id="tmpl-cedmc-status"> 
+			<# if( data.ids.length ) { #>
+       			{{{ data.ids.length }}} 
+			<# } else { #>
+				<?php _e( 'No', 'cedmc' ); ?>
+			<# } #>
+			<?php _e( ' items ', 'cedmc' ); ?>
+		</script>
+        
+        <script type="text/html" id="tmpl-cedmc-collection"> 			
+            <div id="cedmc-toolbar">
+				<div class="cedmc-primary-bar">	</div>
+				<div class="cedmc-secondary-bar"></div>	
+            </div>
+            <div id="cedmc-preview"></div>	
+		</script>
+        <?php	
+}
+
+add_action( 'print_media_templates', 'cedmc_templates' );

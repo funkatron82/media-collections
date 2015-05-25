@@ -205,6 +205,7 @@ function playlist_content( $content ) {
 	
 	$meta = get_playlist_meta( $playlist->ID );
 	$meta['ids'] = get_playlist_media_ids( $playlist->ID );
+	$meta['type'] = get_playlist_type( $playlist );
 	return wp_playlist_shortcode( $meta ) . $content;
 }
 

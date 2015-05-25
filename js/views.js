@@ -1,31 +1,92 @@
 window.ced = window.ced || {};
 
 ( function($){
-	var views = ced.mediaCollections.views, Toolbar, GalleryToolbar, PlaylistToolbar, GalleryPreview, PlaylistPreview, GalleryFeatured;
+	var views = ced.mediaCollections.views, EditButton, GalleryPreview, PlaylistPreview, GalleryFeatured, Status, Gallery, Playlist, Collection;
+	
 	_.extend( views, { mediaCollection: {}, gallery: {}, playlist: {} } );
 	
-	Toolbar = views.mediaCollection.Toolbar = wp.Backbone.View.extend( {
-		initialize: function( options ) {
-			this.listenTo( this.model, 'change', this.render );
+	Collection = views.Collection = wp.Backbone.View.extend( {
+		template: wp.template( 'cedmc-collection' ),
+		initialize: function( options ){
+			this.render();
 		},
-				 
-		events: function() { 
-			return {
-				'click .update' : 'update'	
-			}
+		render: function() {
+			var attrs = _.clone( this.model.attributes ),
+				button = new EditButton( { model: this.model } ),
+				status = new Status( { model: this.model } );
+			this.$el.html( this.template( attrs ) );
+			this.$el.find( '.cedmc-primary-bar' ).append( status.el );
+			this.$el.find( '.cedmc-secondary-bar' ).append( button.el );
+			return this;	
+		}
+	} );
+	
+	Gallery = views.Gallery = Collection.extend( {
+		render: function() {
+			Collection.prototype.render.call( this );
+			var preview = new GalleryPreview( { model: this.model } );
+			this.$el.find( '#cedmc-preview' ).append( preview.el );
+			return this;	
+		}
+	} );
+	
+	Playlist = views.Playlist = Collection.extend( {
+		render: function() {
+			Collection.prototype.render.call( this );
+			var preview = new PlaylistPreview( { model: this.model, el: this.$el.find( '#cedmc-preview' ) } ),
+				selector = new PlaylistTypeSelect( { model: this.model } );
+			this.$el.find( '.cedmc-secondary-bar' ).append( selector.el );
+			return this;	
+		}
+	} );
+	
+	Status = views.Status = wp.Backbone.View.extend( {
+		template: wp.template( 'cedmc-status' ),
+		initialize: function( options ){
+			this.listenTo( this.model, 'change:ids', function(){
+				this.render();
+			} );
+			
+			this.render();
+		},
+		
+		render: function() {
+			var attrs = _.clone( this.model.attributes );
+			this.$el.html( this.template( attrs ) );
+			return this;	
+		}
+	} );
+	
+	EditButton = views.EditButton = wp.Backbone.View.extend( {
+		tagName: 'a',
+		
+		className: 'update button',
+		
+		template: wp.template( 'cedmc-edit-button' ),
+		
+		initialize: function( options ) {
+			this.listenTo( this.model, 'change:ids', this.render );
+			this.render();
+		},
+		
+		events: { 
+			'click' : 'update'	
 		},
 		
 		update: function() {
-			var frame = this.frame();
+			var frame = this.frame(),
+				tag = this.model.get( 'type' );
 			this.listenTo( frame, 'update', function( media ) {
-				var shortcode = wp.media[this.tag].shortcode( media ),
+				var shortcode = wp.media[tag].shortcode( media ),
 					attrs = _.defaults( shortcode.attrs.named, this.model.defaults );
-				attrs = _.omit( attrs, 'id' );
+				attrs = _.omit( attrs, ['id', 'type'] );
 				this.model.save( attrs );
 			} );
 		},
+		
 		frame: function() {
-			var tag = this.tag, 
+			var tag = this.model.get( 'type' ), 
+				type = this.model.get('playlistType'),
 				self = this, 
 				state, 
 				selection, 
@@ -35,7 +96,7 @@ window.ced = window.ced || {};
 				this._frame.dispose();
 			}
 			
-			if ( this.model.type && 'video' === this.model.type ) {
+			if ( type && 'video' === type ) {
 				state = 'video-' + tag;
 			} else {
 				state = tag;
@@ -59,13 +120,14 @@ window.ced = window.ced || {};
 		},
 		
 		selection: function() {
-			var model = this.model, 
+			var model = this.model,
+				tag = this.model.get( 'type' ),  
 				attrs = this.model.toJSON(),
 				media,
 				selection;
 			attrs.ids = attrs.ids.toString();
-			media = wp.media[this.tag].attachments( new wp.shortcode({
-				tag:    this.tag,
+			media = wp.media[tag].attachments( new wp.shortcode({
+				tag:    tag,
 				attrs:  attrs,
 				type:   'single'
 			}) );
@@ -76,7 +138,7 @@ window.ced = window.ced || {};
 				multiple: true
 			});
 
-			selection[ this.tag ] = media[ this.tag ];
+			selection[ tag ] = media[ tag ];
 
 			// Fetch the query's attachments, and then break ties from the
 			// query to allow for sorting.
@@ -94,42 +156,36 @@ window.ced = window.ced || {};
 			this.$el.html( this.template( attrs ) );
 			return this;	
 		}
-		
 	} );
 	
-	GalleryToolbar = views.gallery.Toolbar = Toolbar.extend( {
-		template: wp.template( 'cedmc-gallery-toolbar' ),
-		tag: 'gallery',
-		type: 'image'
-	} );
-	
-	PlaylistToolbar = views.playlist.Toolbar = Toolbar.extend( {
-		template: wp.template( 'cedmc-playlist-toolbar' ),
-		tag: 'playlist',
-		
-		initialize: function( options ) {
-			Toolbar.prototype.initialize.apply(this);
-			this.type = this.model.type || 'audio';
-			this.listenTo( this.model, 'change:type', function() {
-				this.type = this.model.type;
-			} );
+	PlaylistTypeSelect = views.PlaylistTypeSelect = wp.Backbone.View.extend( {
+		tagName: 'select',
+		template: wp.template('cedmc-playlist-type'),
+		initialize: function( options ){
+			this.render();
+		},
+		events: {
+			'change': 'change'	
 		},
 		
-		events: function() {
-			return _.extend( {}, Toolbar.prototype.events.apply(this),
-				 {
-					'change .type': function( event ) {
-						this.model.save( { type: this.$el.find( '.type' ).val() } );
-					}
-				}
-			);
+		render: function() {
+			var attrs = _.clone( this.model.attributes );
+			this.$el.html( this.template( attrs ) );
+			this.$el.val( this.model.get( 'playlistType' ) )
+			return this;	
+		},
+				
+		change: function( event ) {
+			this.model.save( { 'playlistType': this.$el.val() } );
 		}
 	} );
+
 	
 	GalleryPreview = views.gallery.Preview = wp.Backbone.View.extend( {
 		template: wp.template( 'editor-gallery' ),
 		initialize: function( options ) {
 			this.listenTo( this.model, 'change', this.render );
+			this.render();
 		},
 		render: function() {
 			var attrs = _.clone( this.model.attributes ),
@@ -171,7 +227,9 @@ window.ced = window.ced || {};
 				};
 				
 				return self.$el.html( self.template( options ) );
-			} );			
+			} );
+			
+			return this;			
 		}
 	} );
 	
@@ -179,6 +237,7 @@ window.ced = window.ced || {};
 		template: wp.template( 'cedmc-playlist' ),
 		initialize: function( options ) {
 			this.listenTo( this.model, 'change', this.render );
+			this.render();
 		},
 		
 		render: function() {
@@ -201,7 +260,7 @@ window.ced = window.ced || {};
 			data.ids = data.ids.toString();
 
 			options = {
-				type: data.type,
+				type: data.playlistType,
 				style: data.style,
 				tracklist: data.tracklist,
 				tracknumbers: data.tracknumbers,
@@ -233,7 +292,7 @@ window.ced = window.ced || {};
 						meta : attachment.meta
 					};
 
-					if ( 'video' === data.type ) {
+					if ( 'video' === data.playlistType ) {
 						size.width = attachment.width;
 						size.height = attachment.height;
 						if ( wp.media.view.settings.contentWidth ) {
@@ -270,48 +329,50 @@ window.ced = window.ced || {};
 		}
 	} );
 	
-	GalleryFeatured = views.gallery.Featured = wp.Backbone.View.extend( {
-		template: {
-			empty: wp.template( 'cedmc-featured-empty' ),
-			set: wp.template( 'cedmc-featured-set' )
-		},
+	GalleryFeatured = views.GalleryFeatured = wp.Backbone.View.extend( {
+		template: wp.template( 'cedmc-featured' ),
 		
 		initialize: function( options ) {
-			this.render();
+			var self = this,
+				featured = this.model.get( 'featuredId' );
+							
+			if( featured ) {
+				this.image = wp.media.attachment( featured );
+				this.image.fetch().done( function() {
+					self.render();					
+				} );	
+			}
+			
 			this.listenTo( this.model, 'change:ids', function() {
-				this.render();
-			} )
+				if(  this.model.get( 'ids' ).length == 0 ) {
+					this.$el.html(' ');
+				}
+			} );
+			
+			this.listenTo( this.model, 'change:featuredId', function() {
+				var self = this,
+					featured = this.model.get( 'featuredId' );
+				if( featured ) {
+					this.image = wp.media.attachment( featured );
+					this.image.fetch().done( function() {
+						self.render();					
+					} );
+				}
+			} );
 		},
 		
 		render: function() {
-			var featured = this.model.get( 'featured_id' ), 
-				ids = this.model.get( 'ids' ), 
+			var featured = this.model.get( 'featuredId' ), 
 				image = this.image, 
-				self = this,
 				options = {};
-
-			if(  ids.length == 0 ) {
-				this.$el.html(' ');
-				return;	
-			}
 			
 			if( featured ) {
-				if( ! image ) {
-					image = wp.media.attachment( featured );
-					image.fetch().done(function() {
-						self.image = image;
-						options.url = image.get('url');
-						self.$el.html( self.template.set( options ) );
-					} );		
-				} else {
-					options.url = image.get('url');
-					this.$el.html( this.template.set( options ) );
-				}
-				
-			} else {
-				this.$el.html( this.template.empty( options ) );
-			}
+				options.url = image.get('url');	
+			} 
 			
+			this.$el.html( this.template( options ) );	
+			
+			return this;		
 		},
 		
 		events: {
@@ -321,7 +382,7 @@ window.ced = window.ced || {};
 			}, 
 			'click .remove': function() {
 				var self = this;
-				this.model.save( { 'featured_id': '' } ).done( function() {
+				this.model.save( { 'featuredId': '' } ).done( function() {
 					self.image = '';
 					self.render();
 				} );
@@ -329,10 +390,11 @@ window.ced = window.ced || {};
 				return false;
 			}
 		},
+		
 		frame: function() {
 			var self = this, 
 				ids = this.model.get( 'ids' );
-			wp.media.view.settings.post.featuredImageId = this.model.get( 'featured_id' );
+			wp.media.view.settings.post.featuredImageId = this.model.get( 'featuredId' );
 
 			if ( this._frame ) {
 				this._frame.dispose();
@@ -367,10 +429,7 @@ window.ced = window.ced || {};
 
 			this._frame.state('featured-image').on( 'select', function() {
 				var selection = this.get('selection').single();
-				self.model.save( {'featured_id': selection.get( 'id' ) } ).done( function() {
-					self.image = selection;
-					self.render();
-				} );
+				self.model.save( {'featuredId': selection.get( 'id' ) } );
 			} );
 			return this._frame;
 		},

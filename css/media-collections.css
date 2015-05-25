@@ -13,12 +13,16 @@
 	padding-left: 5px;	
 }
 
-#cedmc-toolbar .primary-bar {
-	float:left;	
+#cedmc-toolbar .cedmc-primary-bar {
+	float:right;	
+	max-width: 33%;
+	height: 100%;
 }
 
-#cedmc-toolbar .status {
-	float: right;	
+#cedmc-toolbar .cedmc-secondary-bar {
+	float: left;	
+	max-width: 66%;
+	height: 100%;
 }
 
 #cedmc-toolbar:after  {
@@ -26,18 +30,20 @@
 	clear: both;
 	display: block;	
 }
-#cedmc-main #cedmc-toolbar,
-#cedmc-main #cedmc-preview {
-	margin-top:10px;	
-}
+
 
 #cedmc-toolbar {
-	padding: 2px;
-	line-height:30px;
-	vertical-align:middle;
+	display: inline-block;
+	position: relative;
+	margin: 12px 0 12px;
+	box-sizing: border-box;
+	width: 100%;
+	font-size: 13px;
 }
 
-#cedmc-toolbar .update,
 #cedmc-toolbar select {
-	vertical-align:middle;	
+	margin: 0 0 0 10px;
+	font-size: 14px;
+	line-height: 28px;
 }
+

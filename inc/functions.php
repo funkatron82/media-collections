@@ -184,9 +184,7 @@ function get_playlist_meta( $playlist = NULL ) {
 		return false;	
 	}
 	$meta = get_post_meta( $playlist->ID, '_playlist_metadata', true );
-	$meta = $meta ? (array) $meta : array();
-	$meta['type'] = get_playlist_type( $playlist->ID );
-	return $meta;
+	return $meta ? (array) $meta : array();
 }
 
 /**
@@ -208,13 +206,12 @@ function get_playlist_type( $playlist = NULL ) {
 	$types = get_the_terms( $playlist->ID, 'playlist_type' );
 
 	if ( empty( $types ) ) {              
-		wp_set_object_terms( $playlist->ID, 'audio', 'playlist_type' );
 		return 'audio';
 	}
 	
 	$type = array_shift( $types );	
 	
-	return $type->slug;
+	return in_array( $type->slug, array( 'audio', 'video' ) ) ? $type->slug : 'audio';
 }
 
 /**
